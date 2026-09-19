@@ -8,7 +8,10 @@
 // Heat Vulnerability Index), and writes:
 //   public/data/trees-by-nta.geojson  NTA polygons + per-NTA tree stats
 //   public/data/trees-summary.json    citywide stats + density class breaks
-import { writeFileSync } from "node:fs";
+//   public/data/tree-tiles/           living-tree locations in 0.02° tiles for
+//                                     the trip planner (Int32 [lng×1e5, lat×1e5]
+//                                     pairs, plus index.json of tile keys)
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import area from "@turf/area";
 import { booleanPointInPolygon } from "@turf/boolean-point-in-polygon";
 
@@ -16,6 +19,8 @@ const TREES = "https://data.cityofnewyork.us/resource/uvpi-gqnh.json"; // 2015 c
 const NTAS = "https://data.cityofnewyork.us/resource/9nt8-h7nd.geojson"; // 2020 NTAs
 const PAGE = 50000;
 const TOP_SPECIES = 5;
+// Must match TILE_DEG in src/lib/trip/env.ts.
+const TILE_DEG = 0.02;
 
 async function getJson(url) {
   const res = await fetch(url);
@@ -77,6 +82,7 @@ const polys = ntas.features.map((f) => ({ feature: f, bbox: bboxOf(f.geometry), 
 
 console.log("Fetching 2015 street tree census…");
 const city = emptyStats();
+const tiles = new Map(); // "x_y" -> [lngE5, latE5, ...]
 let unmatched = 0;
 for (let offset = 0; ; offset += PAGE) {
   const params = new URLSearchParams({
@@ -89,6 +95,11 @@ for (let offset = 0; ; offset += PAGE) {
   for (const tree of rows) {
     addTree(city, tree);
     const x = Number(tree.longitude), y = Number(tree.latitude);
+    if (tree.status !== "Dead" && tree.status !== "Stump") {
+      const key = `${Math.floor(x / TILE_DEG)}_${Math.floor(y / TILE_DEG)}`;
+      if (!tiles.has(key)) tiles.set(key, []);
+      tiles.get(key).push(Math.round(x * 1e5), Math.round(y * 1e5));
+    }
     const hit = polys.find(
       (p) => x >= p.bbox[0] && x <= p.bbox[2] && y >= p.bbox[1] && y <= p.bbox[3] &&
         booleanPointInPolygon([x, y], p.feature),
@@ -133,5 +144,13 @@ const summary = {
 
 writeFileSync("public/data/trees-by-nta.geojson", JSON.stringify({ type: "FeatureCollection", features }));
 writeFileSync("public/data/trees-summary.json", JSON.stringify(summary, null, 2) + "\n");
+
+rmSync("public/data/tree-tiles", { recursive: true, force: true });
+mkdirSync("public/data/tree-tiles", { recursive: true });
+for (const [key, coords] of tiles) {
+  writeFileSync(`public/data/tree-tiles/${key}.bin`, Buffer.from(new Int32Array(coords).buffer));
+}
+writeFileSync("public/data/tree-tiles/index.json", JSON.stringify([...tiles.keys()].sort()));
+console.log(`Wrote ${tiles.size} tree tiles.`);
 console.log(`Done. ${summary.city.total} trees, ${unmatched} outside any NTA.`);
 console.log("Density breaks (trees/km²):", summary.densityBreaks);

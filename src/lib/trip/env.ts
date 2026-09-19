@@ -63,11 +63,48 @@ export function loadStaticEnv() {
   return staticEnv;
 }
 
-// 2015 Street Tree Census on NYC Open Data (live, CORS-enabled).
+// --- street trees ---------------------------------------------------------------
+//
+// Tree locations come from the 2015 Street Tree Census (unchanged since 2017).
+// Preferred source: static tiles in public/data/tree-tiles/ written by
+// scripts/build-tree-data.mjs. Fallback: the live NYC Open Data API. If both
+// fail, callers fall back to neighborhood tree density (see loadNtaTrees).
+
+// Must match TILE_DEG in scripts/build-tree-data.mjs.
+const TILE_DEG = 0.02;
 const TREES_API = "https://data.cityofnewyork.us/resource/uvpi-gqnh.json";
 
-export async function fetchTreeGrid(lines: LngLat[][], signal?: AbortSignal) {
-  const [w, s, e, n] = bboxOf(lines, 40);
+let tileIndex: Promise<Set<string> | null> | null = null;
+
+async function treesFromTiles([w, s, e, n]: number[], grid: PointGrid, signal?: AbortSignal) {
+  tileIndex ??= fetch("/data/tree-tiles/index.json")
+    .then((r) => (r.ok ? r.json() : null))
+    .then((keys: string[] | null) => (keys ? new Set(keys) : null))
+    .catch(() => null);
+  const index = await tileIndex;
+  if (!index) return false;
+  const keys: string[] = [];
+  for (let x = Math.floor(w / TILE_DEG); x <= Math.floor(e / TILE_DEG); x++) {
+    for (let y = Math.floor(s / TILE_DEG); y <= Math.floor(n / TILE_DEG); y++) {
+      if (index.has(`${x}_${y}`)) keys.push(`${x}_${y}`);
+    }
+  }
+  const buffers = await Promise.all(
+    keys.map((k) =>
+      fetch(`/data/tree-tiles/${k}.bin`, { signal }).then((r) => {
+        if (!r.ok) throw new Error(`Tree tile ${k} failed (${r.status})`);
+        return r.arrayBuffer();
+      }),
+    ),
+  );
+  for (const buf of buffers) {
+    const v = new Int32Array(buf); // [lng×1e5, lat×1e5, ...]
+    for (let i = 0; i < v.length; i += 2) grid.add([v[i] / 1e5, v[i + 1] / 1e5]);
+  }
+  return true;
+}
+
+async function treesFromApi([w, s, e, n]: number[], grid: PointGrid, signal?: AbortSignal) {
   const params = new URLSearchParams({
     $select: "latitude,longitude",
     $where: `status='Alive' and latitude between ${s} and ${n} and longitude between ${w} and ${e}`,
@@ -76,9 +113,31 @@ export async function fetchTreeGrid(lines: LngLat[][], signal?: AbortSignal) {
   const res = await fetch(`${TREES_API}?${params}`, { signal });
   if (!res.ok) throw new Error(`Tree data failed (${res.status})`);
   const rows: { latitude: string; longitude: string }[] = await res.json();
-  const grid = new PointGrid(20);
   for (const r of rows) grid.add([Number(r.longitude), Number(r.latitude)]);
-  return grid;
+}
+
+/** Street trees around the routes, or null if no tree source is reachable. */
+export async function loadTreeGrid(lines: LngLat[][], signal?: AbortSignal): Promise<PointGrid | null> {
+  const bbox = bboxOf(lines, 40);
+  const grid = new PointGrid(20);
+  try {
+    if (await treesFromTiles(bbox, grid, signal)) return grid;
+    await treesFromApi(bbox, grid, signal);
+    return grid;
+  } catch (err) {
+    if ((err as Error).name === "AbortError") throw err;
+    return null;
+  }
+}
+
+let ntaTrees: Promise<PolygonIndex<{ density: number; residential: boolean }>> | null = null;
+
+/** Living street trees per km² by neighborhood (built by build-tree-data.mjs). */
+export function loadNtaTrees() {
+  ntaTrees ??= fetch("/data/trees-by-nta.geojson")
+    .then((r) => r.json())
+    .then((d) => new PolygonIndex(d.features));
+  return ntaTrees;
 }
 
 // --- weather -----------------------------------------------------------------

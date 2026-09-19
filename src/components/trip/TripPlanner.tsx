@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { fetchForecast, fetchTreeGrid, loadStaticEnv, type HourForecast, type TripSummary } from "@/lib/trip/env";
+import {
+  fetchForecast,
+  loadNtaTrees,
+  loadStaticEnv,
+  loadTreeGrid,
+  type HourForecast,
+  type TripSummary,
+} from "@/lib/trip/env";
 import { fetchCandidates } from "@/lib/trip/routing";
 import {
   PROFILES,
@@ -113,14 +120,26 @@ export default function TripPlanner() {
         const from: [number, number] = [origin.lng, origin.lat];
         const to: [number, number] = [destination.lng, destination.lat];
         const env = await loadStaticEnv();
-        const candidates = await fetchCandidates(from, to, ctrl.signal);
-        const trees = await fetchTreeGrid(candidates.map((c) => c.line), ctrl.signal);
-        const analyses = candidates.map((c) => analyzeRoute(c, env, trees));
+        let candidates;
+        try {
+          candidates = await fetchCandidates(from, to, ctrl.signal);
+        } catch (err) {
+          if ((err as Error).name === "AbortError") throw err;
+          setStatus({ state: "error", message: "The walking-route service isn't responding. Try again in a moment." });
+          return;
+        }
+        // Street-level trees if reachable; otherwise neighborhood tree density.
+        const trees = await loadTreeGrid(candidates.map((c) => c.line), ctrl.signal);
+        const ntaTrees = trees ? null : await loadNtaTrees();
+        const analyses = candidates.map((c) => analyzeRoute(c, env, trees, ntaTrees));
         setPicks(pickRoles(analyses, env.summary));
-        setStatus({ state: "ready" });
+        setStatus({
+          state: "ready",
+          message: trees ? undefined : "Street-level tree data is unavailable right now, so shade uses neighborhood averages.",
+        });
       } catch (err) {
         if ((err as Error).name === "AbortError") return;
-        setStatus({ state: "error", message: "Couldn't load walking routes right now. Try again in a moment." });
+        setStatus({ state: "error", message: "Couldn't load this trip. Try again in a moment." });
       }
     })();
     return () => ctrl.abort();
@@ -231,6 +250,9 @@ export default function TripPlanner() {
             {status.state === "error" && <p className="text-sm text-[#d03b3b]">{status.message}</p>}
             {result && (
               <>
+                {status.message && (
+                  <p className="mb-2 text-[11px] text-[#52514e]">{status.message}</p>
+                )}
                 <p className="mb-3 rounded-lg bg-[#f0efec] px-3 py-2 text-sm text-[#0b0b0b]">{result.explanation}</p>
                 <div className="space-y-2">
                   {result.routes.map((r) => (

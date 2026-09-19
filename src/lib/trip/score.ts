@@ -18,19 +18,34 @@ const MAX_DETOUR_MIN = 8;
 
 export type RouteAnalysis = Candidate & {
   shade: number; // 0–1 share of the walk under tree cover
+  shadeSource: "trees" | "neighborhood"; // street-level trees, or neighborhood-density fallback
   trafficShare: number; // 0–1 share of the walk within 30 m of a truck route
   pm25: number; // time-weighted mean, µg/m³ (district annual mean)
   no2: number; // ppb
   surfaceTemp: number | null; // °F, neighborhood mean surface temperature
 };
 
-export function analyzeRoute(c: Candidate, env: StaticEnv, trees: PointGrid): RouteAnalysis {
+// Fallback when street-level tree data is unreachable: neighborhood density
+// mapped to shade. Calibrated so Park Slope (~1,900 trees/km²) ≈ 64% shade,
+// close to its street-level estimate.
+const DENSITY_FOR_FULL_SHADE = 3000;
+
+type NtaTrees = { find(p: LngLat): { density: number } | null };
+
+export function analyzeRoute(
+  c: Candidate,
+  env: StaticEnv,
+  trees: PointGrid | null,
+  ntaTrees: NtaTrees | null,
+): RouteAnalysis {
   const pts = sampleLine(c.line, SAMPLE_M);
   let shade = 0, traffic = 0, pm25 = 0, no2 = 0, airN = 0, temp = 0, tempN = 0;
   for (const p of pts) {
     const nta = env.nta.find(p);
     // ~3 trees within reach ≈ a continuously shaded stretch of sidewalk.
-    const treeShade = Math.min(1, trees.countWithin(p, TREE_RADIUS_M) / 3);
+    const treeShade = trees
+      ? Math.min(1, trees.countWithin(p, TREE_RADIUS_M) / 3)
+      : Math.min(1, (ntaTrees?.find(p)?.density ?? 0) / DENSITY_FOR_FULL_SHADE);
     shade += nta?.park ? Math.max(treeShade, PARK_SHADE) : treeShade;
     if (env.trucks.isWithin(p, TRUCK_RADIUS_M)) traffic++;
     const air = env.air.find(p);
@@ -41,6 +56,7 @@ export function analyzeRoute(c: Candidate, env: StaticEnv, trees: PointGrid): Ro
   return {
     ...c,
     shade: shade / pts.length,
+    shadeSource: trees ? "trees" : "neighborhood",
     trafficShare: traffic / pts.length,
     pm25: airN ? pm25 / airN : (pmRange.min + pmRange.max) / 2,
     no2: airN ? no2 / airN : (noRange.min + noRange.max) / 2,

@@ -24,7 +24,10 @@ async function requestRoute(points: { lng: number; lat: number; through?: boolea
     signal,
     body: JSON.stringify({
       locations: points.map((p) => ({ lon: p.lng, lat: p.lat, ...(p.through ? { type: "through" } : {}) })),
+      // Walking only: pedestrian costing never uses transit or bikes; also
+      // strongly avoid ferry legs.
       costing: "pedestrian",
+      costing_options: { pedestrian: { type: "foot", use_ferry: 0 } },
       alternates,
       directions_type: "none",
       units: "kilometers",

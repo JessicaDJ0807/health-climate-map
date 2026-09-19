@@ -36,7 +36,7 @@ recommendation updates without reloading.
 |---|---|---|---|
 | Street network and walking times | OpenStreetMap, via the public Valhalla router (`valhalla1.openstreetmap.de`) | Live | Per trip |
 | Address search | NYC Planning Labs GeoSearch | Live | Per keystroke (debounced) |
-| Street trees (shade) | NYC Street Tree Census, NYC Open Data `uvpi-gqnh` | 2015 (latest official census) | Live, per trip, living trees in the area around the routes |
+| Street trees (shade) | NYC Street Tree Census, NYC Open Data `uvpi-gqnh` | 2015 (latest official census; unchanged since 2017) | Pre-built tiles `public/data/tree-tiles/` (living trees only). Fallbacks: live NYC Open Data API, then neighborhood tree density — see Step 3 |
 | Large parks (shade) | 2020 Neighborhood Tabulation Areas, NYC Open Data `9nt8-h7nd`, type 9 | 2020 boundaries | Pre-built file `public/data/nta-env.geojson` |
 | Traffic proxy | NYC DOT truck routes, NYC Open Data `jjja-shxy` (32,939 segments) | Updated 2026 | Pre-built file `public/data/truck-routes.json` |
 | Air pollution | NYC Environment & Health Data Portal (`nychealth/EHDP-data`): PM2.5 (indicator 2023, measure 1425) and NO₂ (indicator 2025, measure 1431), annual means for 59 community districts | 2025 | Pre-built file `public/data/air-by-cd.geojson` |
@@ -45,12 +45,25 @@ recommendation updates without reloading.
 | Sun position | `suncalc` library | Computed | Per departure time |
 
 Pre-built files are regenerated with `npm run build:trip`
-(`scripts/build-trip-data.mjs`).
+(`scripts/build-trip-data.mjs`); tree tiles and neighborhood tree density with
+`npm run build:trees` (`scripts/build-tree-data.mjs`).
+
+## Scope: walking only
+
+The app plans walking trips only — no subway, bus, bike or car legs. This is
+deliberate: exposure on those modes (subway platform heat and underground air,
+waits at bus stops, cycling exertion) is too variable, and public data for it
+is too thin to estimate credibly. The walking factors — trees, truck routes,
+sun — are measurable at street level, so the app stays within them.
 
 ## Step 1 — Candidate routes
 
-Three requests go to Valhalla at the same time, all using its standard
-pedestrian settings:
+Routing uses **Valhalla**, an open-source routing engine, via the free public
+server run on OpenStreetMap data. Every request uses Valhalla's `pedestrian`
+costing (walking only: it never uses transit or bikes) with
+`type: "foot"` and `use_ferry: 0`, so ferry legs are strongly avoided.
+
+Three requests go to Valhalla at the same time:
 
 | Request | Returns |
 |---|---|
@@ -86,6 +99,7 @@ Each route is split into points every **25 m**. At each point:
 | Measure | Rule |
 |---|---|
 | Tree shade | Count living street trees within **15 m**. 0 trees → 0, 3+ trees → 1 (full shade), proportional in between. |
+| Tree shade (fallback) | Used only if street-level tree locations can't be loaded: the neighborhood's living street trees per km² ÷ 3,000, capped at 1 (calibrated so Park Slope ≈ 64%, close to its street-level value). The app shows a note when this happens. |
 | Park shade | If the point is inside a large park (NTA type 9), shade is at least **0.7**. Park trees are not in the street-tree census; without this, a path through Central Park would score as unshaded. |
 | Traffic | Is the point within **30 m** of any truck-route segment? (yes/no) |
 | Air | PM2.5 and NO₂ of the community district containing the point. |
@@ -240,11 +254,13 @@ community district.
   pollution is a district annual average; air temperature is one citywide
   forecast; surface heat is a neighborhood average.
 - **Shade means trees nearby, not measured shadow.** Tree data is from 2015.
-  Building shadows are not modeled.
+  Building shadows are not modeled. In the neighborhood-density fallback,
+  routes in the same neighborhoods get similar shade, so shade barely
+  separates them.
 - **Truck routes are a proxy for traffic.** They mark where heavy vehicles are
   allowed, not measured traffic volumes.
 - **Large parks count as 70% shaded**; small parks are not flagged.
-- **Walking only.** Transit, cycling and other modes are not modeled.
+- **Walking only** by design (see Scope).
 - **Judgment calls.** All weights, radii (15 m, 30 m) and scaling constants.
   Three were tuned after test trips: trees for full shade (2 → 3), the +8 min
   detour allowance, and the Asthma weights. The two sample trips were chosen
