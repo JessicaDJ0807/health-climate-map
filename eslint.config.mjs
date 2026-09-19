@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Vendored MapLibre worker, copied in by scripts/copy-maplibre-worker.mjs.
     "public/maplibre/**",
+    // Hackathon dataset starter repo (separate git repo, git-ignored).
+    "nyc2026-dataset/**",
   ]),
 ]);
 
