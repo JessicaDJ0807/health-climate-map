@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "node scripts/copy-maplibre-worker.mjs"
+    "postinstall": "node scripts/copy-maplibre-worker.mjs",
+    "build:trees": "node scripts/build-tree-data.mjs"
   },
   "dependencies": {
     "maplibre-gl": "^6.10.0",
@@ -17,6 +18,8 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@turf/area": "^7.4.0",
+    "@turf/boolean-point-in-polygon": "^7.4.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

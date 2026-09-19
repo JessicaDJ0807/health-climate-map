@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Health in Climate NYC",
-  description: "NYC health and climate map",
+  description: "Map of NYC street trees from the 2015 Street Tree Census",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

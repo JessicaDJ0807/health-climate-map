@@ -1,0 +1,44 @@
+{
+  "censusYear": 2015,
+  "source": "NYC Open Data uvpi-gqnh (2015 Street Tree Census), 9nt8-h7nd (2020 NTAs)",
+  "builtAt": "2026-09-19",
+  "unmatched": 86,
+  "densityBreaks": [
+    832,
+    1010,
+    1170,
+    1338
+  ],
+  "city": {
+    "alive": 652173,
+    "dead": 13961,
+    "stump": 17654,
+    "good": 528850,
+    "fair": 96504,
+    "poor": 26818,
+    "total": 683788,
+    "speciesCount": 133,
+    "topSpecies": [
+      {
+        "name": "London planetree",
+        "count": 87014
+      },
+      {
+        "name": "honeylocust",
+        "count": 64263
+      },
+      {
+        "name": "Callery pear",
+        "count": 58931
+      },
+      {
+        "name": "pin oak",
+        "count": 53185
+      },
+      {
+        "name": "Norway maple",
+        "count": 34189
+      }
+    ]
+  }
+}
