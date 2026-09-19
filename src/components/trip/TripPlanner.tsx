@@ -11,6 +11,7 @@ import {
   type HourForecast,
   type TripSummary,
 } from "@/lib/trip/env";
+import { reverseGeocode, type SearchNear } from "@/lib/trip/geocode";
 import { fetchCandidates } from "@/lib/trip/routing";
 import {
   PROFILES,
@@ -24,6 +25,7 @@ import {
 } from "@/lib/trip/score";
 import PlaceInput, { type Place } from "./PlaceInput";
 import RouteCard from "./RouteCard";
+import type { Endpoint } from "./TripMap";
 
 // MapLibre needs `window`, so skip server prerendering for the map.
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
@@ -101,6 +103,7 @@ export default function TripPlanner() {
   const [picks, setPicks] = useState<Picks>([]);
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mapView, setMapView] = useState<SearchNear | undefined>(undefined);
   const [now] = useState(() => new Date());
 
   useEffect(() => {
@@ -157,6 +160,14 @@ export default function TripPlanner() {
   const result = picks.length && summary ? scoreTrip(picks, profile, cond, summary) : null;
   const shownSelection = selectedId && result?.routes.some((r) => r.id === selectedId) ? selectedId : result?.recommendedId ?? null;
 
+  // Map click / marker drag: look up the nearest address for the label, then set
+  // the endpoint once (setting it triggers the route fetch).
+  const pickOnMap = async (which: Endpoint, lng: number, lat: number) => {
+    const place = await reverseGeocode(lng, lat);
+    if (which === "origin") setOrigin(place);
+    else setDestination(place);
+  };
+
   const changeProfile = (p: ProfileId) => { setProfile(p); setSelectedId(null); };
   const changeOffset = (o: number) => { setOffset(o); setSelectedId(null); };
 
@@ -174,6 +185,8 @@ export default function TripPlanner() {
         recommendedId={result?.recommendedId ?? null}
         selectedId={shownSelection}
         onSelect={setSelectedId}
+        onPick={pickOnMap}
+        onViewChange={setMapView}
       />
 
       <aside className="absolute inset-x-2 bottom-2 flex max-h-[52vh] flex-col overflow-hidden rounded-2xl bg-[#fcfcfb] shadow-xl ring-1 ring-black/10 sm:inset-x-auto sm:bottom-4 sm:left-4 sm:top-4 sm:max-h-none sm:w-[380px]">
@@ -189,8 +202,8 @@ export default function TripPlanner() {
           </header>
 
           <div className="space-y-2">
-            <PlaceInput label="From" marker="A" value={origin} onChange={setOrigin} placeholder="Starting point" />
-            <PlaceInput label="To" marker="B" value={destination} onChange={setDestination} placeholder="Destination" />
+            <PlaceInput label="From" marker="A" value={origin} onChange={setOrigin} placeholder="Starting point" near={mapView} />
+            <PlaceInput label="To" marker="B" value={destination} onChange={setDestination} placeholder="Destination" near={mapView} />
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {DEMO_TRIPS.map((t) => (
@@ -244,7 +257,9 @@ export default function TripPlanner() {
 
           <div className="mt-4">
             {status.state === "idle" && (
-              <p className="text-sm text-[#52514e]">Choose a start and destination, or try a sample trip.</p>
+              <p className="text-sm text-[#52514e]">
+                Search for a start and destination, click the map to drop them, or try a sample trip.
+              </p>
             )}
             {status.state === "loading" && <p className="text-sm text-[#52514e]">Finding walking routes…</p>}
             {status.state === "error" && <p className="text-sm text-[#d03b3b]">{status.message}</p>}

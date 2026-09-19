@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { searchPlaces, type Place, type SearchNear } from "@/lib/trip/geocode";
 
-export type Place = { label: string; lng: number; lat: number };
-
-// NYC's own geocoder (NYC Planning Labs GeoSearch) — no key, CORS-enabled.
-const AUTOCOMPLETE = "https://geosearch.planninglabs.nyc/v2/autocomplete";
+export type { Place };
 
 type Props = {
   label: string;
@@ -13,9 +11,10 @@ type Props = {
   value: Place | null;
   onChange: (place: Place | null) => void;
   placeholder: string;
+  near?: SearchNear; // current map view, to rank nearby results first
 };
 
-export default function PlaceInput({ label, marker, value, onChange, placeholder }: Props) {
+export default function PlaceInput({ label, marker, value, onChange, placeholder, near }: Props) {
   const [text, setText] = useState(value?.label ?? "");
   const [results, setResults] = useState<Place[]>([]);
   const [open, setOpen] = useState(false);
@@ -23,6 +22,11 @@ export default function PlaceInput({ label, marker, value, onChange, placeholder
   const listId = useId();
   const [typed, setTyped] = useState(false);
   const [shownValue, setShownValue] = useState(value);
+  // Read at search time; panning the map shouldn't re-run a search.
+  const nearRef = useRef(near);
+  useEffect(() => {
+    nearRef.current = near;
+  });
 
   // Keep the box in sync when the place is set from outside (demo trips).
   if (value !== shownValue) {
@@ -39,15 +43,7 @@ export default function PlaceInput({ label, marker, value, onChange, placeholder
     const ctrl = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`${AUTOCOMPLETE}?text=${encodeURIComponent(text)}`, { signal: ctrl.signal });
-        const data = await res.json();
-        setResults(
-          (data.features ?? []).slice(0, 5).map((f: GeoJSON.Feature<GeoJSON.Point, { label: string }>) => ({
-            label: f.properties.label.replace(/, NY, USA$/, ""),
-            lng: f.geometry.coordinates[0],
-            lat: f.geometry.coordinates[1],
-          })),
-        );
+        setResults(await searchPlaces(text, ctrl.signal, nearRef.current));
         setActive(0);
         setOpen(true);
       } catch {

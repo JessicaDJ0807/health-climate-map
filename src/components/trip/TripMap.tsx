@@ -10,6 +10,8 @@ import { ROLE_COLORS, panelPadding } from "./style";
 const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 const NYC_BOUNDS: [number, number, number, number] = [-74.26, 40.49, -73.69, 40.92];
 
+export type Endpoint = "origin" | "destination";
+
 type Props = {
   origin: Place | null;
   destination: Place | null;
@@ -17,6 +19,10 @@ type Props = {
   recommendedId: string | null;
   selectedId: string | null;
   onSelect: (id: string) => void;
+  /** A point chosen on the map (click menu or marker drag). */
+  onPick: (which: Endpoint, lng: number, lat: number) => void;
+  /** Map center and zoom after each move (used to rank search results). */
+  onViewChange?: (view: { lng: number; lat: number; zoom: number }) => void;
 };
 
 function markerEl(text: string) {
@@ -25,6 +31,21 @@ function markerEl(text: string) {
     "flex size-7 items-center justify-center rounded-full bg-[#0b0b0b] text-xs font-semibold text-white ring-2 ring-white shadow";
   el.textContent = text;
   return el;
+}
+
+// Click menu: "Start here" / "End here". Minimal markup; styling is left to the UI pass.
+function pickMenu(onChoose: (which: Endpoint) => void) {
+  const root = document.createElement("div");
+  root.className = "flex flex-col gap-1 text-sm";
+  for (const [which, text] of [["origin", "Start here"], ["destination", "End here"]] as const) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "rounded px-2 py-1 text-left hover:bg-black/5";
+    btn.textContent = text;
+    btn.addEventListener("click", () => onChoose(which));
+    root.appendChild(btn);
+  }
+  return root;
 }
 
 function routeFeatures(routes: ScoredRoute[], selectedId: string | null, recommendedId: string | null) {
@@ -44,7 +65,16 @@ function routeFeatures(routes: ScoredRoute[], selectedId: string | null, recomme
   };
 }
 
-export default function TripMap({ origin, destination, routes, recommendedId, selectedId, onSelect }: Props) {
+export default function TripMap({
+  origin,
+  destination,
+  routes,
+  recommendedId,
+  selectedId,
+  onSelect,
+  onPick,
+  onViewChange,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const loaded = useRef(false);
@@ -52,8 +82,12 @@ export default function TripMap({ origin, destination, routes, recommendedId, se
   const pendingRoutes = useRef(routeFeatures([], null, null));
   const markers = useRef<{ a?: maplibregl.Marker; b?: maplibregl.Marker }>({});
   const onSelectRef = useRef(onSelect);
+  const onPickRef = useRef(onPick);
+  const onViewRef = useRef(onViewChange);
   useEffect(() => {
     onSelectRef.current = onSelect;
+    onPickRef.current = onPick;
+    onViewRef.current = onViewChange;
   });
 
   useEffect(() => {
@@ -68,6 +102,13 @@ export default function TripMap({ origin, destination, routes, recommendedId, se
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+
+    const reportView = () => {
+      const c = map.getCenter();
+      onViewRef.current?.({ lng: c.lng, lat: c.lat, zoom: map.getZoom() });
+    };
+    map.on("load", reportView);
+    map.on("moveend", reportView);
 
     map.on("load", () => {
       map.addSource("routes", { type: "geojson", data: pendingRoutes.current });
@@ -95,9 +136,23 @@ export default function TripMap({ origin, destination, routes, recommendedId, se
       loaded.current = true;
     });
 
-    map.on("click", "route-line", (e) => {
-      const id = e.features?.[0]?.properties?.id;
-      if (id) onSelectRef.current(String(id));
+    // Clicking a route selects it; clicking anywhere else offers Start / End here.
+    const menu = new maplibregl.Popup({ closeButton: false, offset: 6 });
+    map.on("click", (e) => {
+      const route = loaded.current ? map.queryRenderedFeatures(e.point, { layers: ["route-line"] })[0] : undefined;
+      if (route?.properties?.id) {
+        menu.remove();
+        onSelectRef.current(String(route.properties.id));
+        return;
+      }
+      const { lng, lat } = e.lngLat;
+      menu
+        .setLngLat(e.lngLat)
+        .setDOMContent(pickMenu((which) => {
+          menu.remove();
+          onPickRef.current(which, lng, lat);
+        }))
+        .addTo(map);
     });
     map.on("mouseenter", "route-line", () => (map.getCanvas().style.cursor = "pointer"));
     map.on("mouseleave", "route-line", () => (map.getCanvas().style.cursor = ""));
@@ -115,9 +170,19 @@ export default function TripMap({ origin, destination, routes, recommendedId, se
     if (!map) return;
     for (const [key, place, text] of [["a", origin, "A"], ["b", destination, "B"]] as const) {
       markers.current[key]?.remove();
-      markers.current[key] = place
-        ? new maplibregl.Marker({ element: markerEl(text) }).setLngLat([place.lng, place.lat]).addTo(map)
-        : undefined;
+      if (!place) {
+        markers.current[key] = undefined;
+        continue;
+      }
+      const which: Endpoint = key === "a" ? "origin" : "destination";
+      const marker = new maplibregl.Marker({ element: markerEl(text), draggable: true })
+        .setLngLat([place.lng, place.lat])
+        .addTo(map);
+      marker.on("dragend", () => {
+        const { lng, lat } = marker.getLngLat();
+        onPickRef.current(which, lng, lat);
+      });
+      markers.current[key] = marker;
     }
   }, [origin, destination]);
 
