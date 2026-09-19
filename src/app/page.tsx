@@ -1,9 +1,9 @@
-import TreeExplorer from "@/components/TreeExplorer";
+import TripPlanner from "@/components/trip/TripPlanner";
 
 export default function Home() {
   return (
-    <main className="relative h-screen w-full bg-[#f9f9f7]">
-      <TreeExplorer />
+    <main className="h-dvh w-full bg-[#f9f9f7]">
+      <TripPlanner />
     </main>
   );
 }

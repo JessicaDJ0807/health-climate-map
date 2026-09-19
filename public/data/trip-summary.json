@@ -1,0 +1,30 @@
+{
+  "builtAt": "2026-09-19",
+  "sources": {
+    "air": "NYC Environment & Health Data Portal, annual means by community district (PM2.5 2025, NO2 2025)",
+    "trucks": "NYC DOT truck routes (NYC Open Data jjja-shxy)",
+    "heat": "NYC Heat Vulnerability Index, surface temperature by 2020 NTA",
+    "parks": "2020 NTAs of type 9 (large parks), NYC Open Data 9nt8-h7nd"
+  },
+  "airYear": "2025",
+  "pm25": {
+    "min": 5.69,
+    "max": 9.71,
+    "terciles": [
+      6.23,
+      6.56
+    ]
+  },
+  "no2": {
+    "min": 9.78,
+    "max": 24.57,
+    "terciles": [
+      14.91,
+      16.61
+    ]
+  },
+  "surfaceTemp": {
+    "min": 80.8,
+    "max": 90.8
+  }
+}

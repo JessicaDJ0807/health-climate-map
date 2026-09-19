@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   DENSITY_COLORS,
   HEALTH,
@@ -142,11 +143,16 @@ export default function TreePanel({ summary, cityDensity, area, pinned, onClear,
 
   return (
     <aside className="absolute inset-x-4 bottom-20 max-h-[45vh] overflow-y-auto rounded-xl bg-[#fcfcfb] p-4 shadow-lg ring-1 ring-black/10 sm:inset-x-auto sm:bottom-auto sm:left-4 sm:top-4 sm:max-h-[calc(100vh-2rem)] sm:w-[340px]">
-      <header className="mb-3">
-        <h1 className="text-lg font-semibold text-[#0b0b0b]">NYC Street Trees</h1>
-        <p className="text-xs text-[#52514e]">
-          {summary.censusYear} Street Tree Census (latest official count) · NYC Parks
-        </p>
+      <header className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-lg font-semibold text-[#0b0b0b]">NYC Street Trees</h1>
+          <p className="text-xs text-[#52514e]">
+            {summary.censusYear} Street Tree Census (latest official count) · NYC Parks
+          </p>
+        </div>
+        <Link href="/" className="shrink-0 text-xs text-[#2a78d6] hover:underline">
+          Route planner
+        </Link>
       </header>
 
       <div className="mb-3 flex items-start justify-between gap-2 border-t border-[#e1e0d9] pt-3">

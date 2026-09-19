@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Health in Climate NYC",
-  description: "Map of NYC street trees from the 2015 Street Tree Census",
+  title: "Safer Walk NYC",
+  description: "Compare NYC walking routes by estimated environmental exposure: air, traffic, shade and heat.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
