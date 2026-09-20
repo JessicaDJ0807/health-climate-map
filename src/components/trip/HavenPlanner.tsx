@@ -73,7 +73,6 @@ export default function HavenPlanner() {
               ["◌ Air", `NYC Environment & Health Data Portal annual PM2.5 and NO₂ by community district (${trip.summary?.airYear ?? "2025"}). Relative to other NYC neighborhoods, not a health threshold.`],
               ["☀ Heat & sun", "Heat Vulnerability Index surface temperature by neighborhood, with the National Weather Service hourly forecast and computed sun position."],
               ["↗ Walking routes", "OpenStreetMap via Valhalla pedestrian routing, sampled every 25 m. Options more than 35% or 8 minutes slower than the fastest are dropped."],
-              ["Not scored", "PM10, tree pollen, construction, building shadows, measured traffic volume, sidewalk condition, slope, and transit."],
             ].map(([t, b]) => (
               <article key={t}>
                 <strong>{t}</strong>
