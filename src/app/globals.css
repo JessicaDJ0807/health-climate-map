@@ -224,12 +224,17 @@
   transform: none;
 }
 
-/* The scrim is cut to the same phone frame; let it cover the whole viewport. */
+/* The scrim is cut to the same phone frame — 430px wide and centred with a
+   translate(-50%). Clear the width and the transform as well as the box, or
+   inset:0 just moves that narrow column to hang off the left edge. */
 .web-layout .scrim {
   inset: 0;
+  width: auto;
   height: auto;
+  max-width: none;
   max-height: none;
   border-radius: 0;
+  transform: none;
 }
 
 @media (max-width: 620px) {
