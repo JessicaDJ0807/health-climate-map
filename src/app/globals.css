@@ -1,26 +1,245 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   HavenPath UI, as delivered by the design team (HavenPath-Web-Version/dist).
+   These seven sheets are their files, copied verbatim, in their original cascade
+   order. They are imported after Tailwind so their rules win, and the planner
+   emits their class names rather than utility classes.
+
+   Do not hand-edit them: re-copy from the handoff when the designers ship an
+   update. App-specific overrides go in the block at the bottom of this file.
+--------------------------------------------------------------------------- */
+@import "../styles/haven/styles.css";
+@import "../styles/haven/walking-trees.css";
+@import "../styles/haven/neo-app.css";
+@import "../styles/haven/cloud-glass.css";
+@import "../styles/haven/liquid-glass.css";
+@import "../styles/haven/manhattan-data.css";
+@import "../styles/haven/web.css";
+
+/* --- app-side additions ---------------------------------------------------
+   Only what their sheets cannot know about: the live MapLibre canvas that
+   replaces their static map image, and the few controls we added.
+-------------------------------------------------------------------------- */
+
+/* Their .reference-map-view framed a static PNG; ours holds a live map. */
+.web-layout .reference-map-view .live-map {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.web-layout .reference-map-view .maplibregl-map {
+  width: 100%;
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Keep MapLibre's own controls out of the way of their layer picker. */
+.web-layout .maplibregl-ctrl-top-right {
+  top: 62px;
+  right: 6px;
+}
+
+/* Sample-trip chips under the destination field. */
+.sample-trips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.sample-trips button {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+/* Departure slider, which their prototype had no equivalent for. */
+.departure-row {
+  margin-top: 18px;
+}
+
+.departure-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--green);
+}
+
+.departure-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.status-note {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-2);
+}
+
+.status-note.is-error {
+  color: var(--red);
+}
+
+/* --- inline route results -------------------------------------------------
+   The handoff floated the route cards in a .routes-tray overlay. We show them
+   in the control panel under the Compare button instead, so the map stays
+   visible while comparing. The cards keep their own styling; only the
+   container and the grid change.
+-------------------------------------------------------------------------- */
+
+.route-results {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.route-results-head {
+  margin-bottom: 12px;
+}
+
+.route-results-head h2 {
+  margin: 2px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+}
+
+/* One card per row: the panel is ~340-420px, the tray's 3 columns were not. */
+.web-layout .control-panel .route-cards {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* --- topbar actions -------------------------------------------------------
+   The bottom nav is gone: Route is the only screen, and the assistant and
+   profile both open from the top right. The assistant button reuses their
+   .pill-button so it sits level with the profile chip.
+-------------------------------------------------------------------------- */
+
+.assistant-button {
+  gap: 7px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.button-icon {
+  display: grid;
+  place-items: center;
+}
+
+.button-icon svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Open-drawer state, matching the map picker's active button. */
+.web-layout .pill-button.active,
+.web-layout .profile-chip.active {
+  color: #fff;
+  background: #385f54;
+  border-color: rgba(30, 62, 52, 0.5);
+  box-shadow: 0 6px 16px rgba(36, 73, 62, 0.26);
+}
+
+.web-layout .profile-chip.active .avatar {
+  color: #24483d;
+  background: #fff;
+}
+
+/* The account mark shown until a name is saved. */
+.person-glyph {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+}
+
+.large-avatar .person-glyph {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.7;
+}
+
+/* Their sheet drops the profile label here; the assistant label goes too. */
+@media (max-width: 760px) {
+  .assistant-button > span:last-child { display: none; }
+}
+
+/* No bottom nav to clear any more. */
+.web-layout .app-shell { padding-bottom: 20px; }
+
+@media (max-width: 620px) {
+  .web-layout .app-shell { padding-bottom: 14px; }
+  .web-layout .control-panel { padding-bottom: 26px; }
+}
+
+/* --- overlay stacking -----------------------------------------------------
+   Their phone layout gives .topbar z-index 20, below the drawer's 30, so a
+   drawer covers it. The web sheet raises .topbar to 40 (it is sticky there)
+   without lifting the overlays with it, which left the top of the profile
+   drawer — and the whole method modal, at 32 — painted underneath it.
+
+   Restore the intended order, above the 91 the expanded map legend uses.
+-------------------------------------------------------------------------- */
+
+.web-layout .scrim { z-index: 100; }
+.web-layout .drawer { z-index: 101; }
+.web-layout .modal,
+.web-layout .alert-card { z-index: 102; }
+
+/* --- drawer placement -----------------------------------------------------
+   neo-app.css centres the drawer (left:50%; transform:translate(-50%)) and
+   cloud-glass.css gives it a fixed 844px height — both part of simulating a
+   430px phone frame. In the web layout that leaves the panel floating in the
+   middle of a 1600px shell, so dock it to the right instead, on the same
+   grid lines as .map-panel (top:98px, 20px gutter, 30px radius).
+
+   .open is listed too: .neo-theme .drawer.open re-applies the centring
+   transform at a specificity this would otherwise lose to.
+-------------------------------------------------------------------------- */
+
+.web-layout .drawer,
+.web-layout .drawer.open {
+  left: auto;
+  right: 20px;
+  top: 98px;
+  bottom: 20px;
+  height: auto;
+  max-height: none;
+  width: min(430px, calc(100% - 40px));
+  border-radius: 30px;
+  transform: none;
+}
+
+/* The scrim is cut to the same phone frame; let it cover the whole viewport. */
+.web-layout .scrim {
+  inset: 0;
+  height: auto;
+  max-height: none;
+  border-radius: 0;
+}
+
+@media (max-width: 620px) {
+  .web-layout .drawer,
+  .web-layout .drawer.open {
+    left: 9px;
+    right: 9px;
+    top: 80px;
+    bottom: 9px;
+    width: auto;
+    border-radius: 24px;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

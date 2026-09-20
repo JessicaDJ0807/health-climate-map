@@ -25,7 +25,7 @@ export type NtaProps = TreeStats & {
 export type NtaCollection = GeoJSON.FeatureCollection<GeoJSON.Polygon | GeoJSON.MultiPolygon, NtaProps>;
 
 export type TreeSummary = {
-  censusYear: number;
+  dataUpdated: string; // ISO date the Forestry inventory last changed
   source: string;
   densityBreaks: number[];
   city: TreeStats;

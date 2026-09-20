@@ -1,0 +1,209 @@
+/* HavenPath Sky Glass — soft, optimistic and accessible */
+:root{
+  --sky:#6f96b7;
+  --sky-deep:#587f9f;
+  --sky-pale:#9fc0d3;
+  --glass:rgba(211,245,222,.76);
+  --glass-strong:rgba(218,250,228,.9);
+  --glass-soft:rgba(226,250,235,.58);
+  --forest:#174e2d;
+  --forest-2:#2d6844;
+  --mist:#f7f3ef;
+  --glass-line:rgba(255,255,255,.68);
+  --soft-line:rgba(23,78,45,.13);
+  --soft-shadow:0 20px 46px rgba(43,78,103,.22);
+  --ink:var(--forest);
+  --ink-2:#547066;
+  --cream:var(--sky);
+  --paper:var(--glass-strong);
+  --green:var(--forest);
+  --green-2:#3f8a59;
+  --mint:rgba(219,249,228,.84);
+  --blue:#3b789c;
+  --blue-soft:rgba(224,244,250,.85);
+  --sun:#d6f6a4;
+  --sun-soft:rgba(235,251,208,.88);
+  --line:var(--soft-line);
+  --shadow:var(--soft-shadow);
+}
+
+html{background:var(--sky);color-scheme:light}
+body.neo-theme{
+  color:var(--forest);
+  background:
+    radial-gradient(ellipse 58% 22% at 4% 61%,rgba(250,246,241,.93) 0 48%,transparent 49%),
+    radial-gradient(ellipse 50% 19% at 98% 84%,rgba(250,246,241,.9) 0 48%,transparent 49%),
+    linear-gradient(155deg,#7ea4c1,#628aaa 72%);
+}
+.neo-theme button,.neo-theme input{color:inherit}
+.neo-theme button:focus-visible,.neo-theme input:focus-visible{outline:3px solid #174e2d;outline-offset:3px}
+.neo-theme .app-shell{
+  background:
+    radial-gradient(ellipse 70% 16% at -8% 74%,rgba(250,246,241,.94) 0 49%,transparent 50%),
+    radial-gradient(ellipse 64% 13% at 110% 88%,rgba(250,246,241,.9) 0 49%,transparent 50%),
+    linear-gradient(165deg,#7ea5c2 0%,#6b92b2 58%,#789fba 100%);
+  box-shadow:0 32px 90px rgba(38,66,89,.34),inset 0 0 0 1px rgba(255,255,255,.2);
+}
+
+/* Shared glossy surface */
+.neo-theme .nyc-map-card,.neo-theme .condition-card,.neo-theme .search-box,
+.neo-theme .route-card,.neo-theme .routes-tray,.neo-theme .nav-status-bar,
+.neo-theme .reassurance,.neo-theme .completion-card,.neo-theme .drawer,
+.neo-theme .modal,.neo-theme .alert-card,.neo-theme .profile-summary>div,
+.neo-theme .medication-box,.neo-theme .safe-place{
+  color:var(--forest);
+  background:
+    linear-gradient(122deg,rgba(255,255,255,.42) 0 21%,transparent 21.5% 58%,rgba(255,255,255,.13) 58.5%),
+    var(--glass);
+  border:1px solid var(--glass-line);
+  box-shadow:var(--soft-shadow),inset 0 1px 2px rgba(255,255,255,.65);
+  backdrop-filter:blur(20px) saturate(116%);
+}
+
+/* Header */
+.neo-theme .topbar{
+  background:rgba(104,143,175,.76);
+  border-bottom:1px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(22px);
+}
+.neo-theme .brand-mark,.neo-theme .haven-icon{
+  color:var(--forest);background:var(--glass-strong);
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.8),0 10px 25px rgba(42,75,98,.16);
+}
+.neo-theme .brand strong{color:#fff;text-shadow:0 1px 8px rgba(32,64,85,.2)}
+.neo-theme .pill-button,.neo-theme .profile-chip{
+  color:var(--forest);background:rgba(222,248,231,.74);border:1px solid rgba(255,255,255,.58);
+  box-shadow:inset 0 1px rgba(255,255,255,.72),0 8px 20px rgba(47,78,102,.12)
+}
+.neo-theme .install-button{color:var(--forest);background:var(--glass-strong);border-color:#fff;box-shadow:0 8px 22px rgba(44,77,101,.16)}
+.neo-theme .avatar{color:var(--forest);background:linear-gradient(145deg,#f8f5f1,#d6f3df)}
+
+/* Map */
+.neo-theme .map-panel{background:transparent}
+.neo-theme .map-toolbar{color:#fff;background:transparent;border:0;text-shadow:0 1px 5px rgba(37,67,88,.3)}
+.neo-theme .map-toolbar button{color:var(--forest);background:rgba(218,247,227,.74);border:1px solid rgba(255,255,255,.52)}
+.neo-theme .live-dot{background:#d7f7a4;box-shadow:0 0 0 4px rgba(215,247,164,.25),0 0 14px rgba(255,255,255,.7)}
+.neo-theme .toggle{background:rgba(65,103,83,.28)}.neo-theme .toggle.on{background:var(--forest)}.neo-theme .toggle.on:after{background:#f8fff9}
+.neo-theme .map-canvas{background:#91b6c7}
+.neo-theme .map-is-blank .map-toolbar{visibility:hidden}
+.neo-theme .map-is-blank .map-canvas{
+  background:rgba(211,245,222,.38);
+  border:1px solid rgba(255,255,255,.62);
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.54),0 20px 42px rgba(45,76,98,.18);
+  backdrop-filter:blur(18px);
+}
+.neo-theme .map-is-blank .map-canvas>*{display:none!important}
+.neo-theme .nyc-overview{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.2),transparent 38%),
+    linear-gradient(145deg,#a7cad6,#73a0b6);
+}
+.neo-theme .nyc-overview:after{background:linear-gradient(180deg,transparent 62%,rgba(78,123,150,.18))}
+.neo-theme .nyc-water-shape{fill:#8fb6c7}
+.neo-theme .borough{stroke:rgba(255,255,255,.77);stroke-width:5;filter:drop-shadow(0 12px 12px rgba(51,89,103,.18))}
+.neo-theme .shade-high{fill:#7dbb84}.neo-theme .shade-medium{fill:#a7d7a7}.neo-theme .shade-low{fill:#c8e5bd}
+.neo-theme .brooklyn-borough{stroke:#f2fff2;stroke-width:8;filter:drop-shadow(0 0 9px rgba(255,255,255,.7))}
+.neo-theme .tree-density-overlay{opacity:.72;mix-blend-mode:multiply}
+.neo-theme .borough-labels text{fill:var(--forest);stroke:rgba(245,255,247,.84);stroke-width:5px}
+.neo-theme .water-labels text{fill:#547f92}
+.neo-theme .brooklyn-route-pin circle:first-child{fill:var(--forest);stroke:#fff}.neo-theme .brooklyn-route-pin circle:nth-child(2){fill:#d7f7a4}
+.neo-theme .brooklyn-route-pin path{stroke:var(--forest)}.neo-theme .brooklyn-route-pin text{fill:var(--forest)}.neo-theme .brooklyn-route-pin .small-label{fill:#406d59}
+.neo-theme .city-route.fastest{stroke:#fff;opacity:.82}.neo-theme .city-route.safest{stroke:var(--forest)}.neo-theme .city-route.calmest{stroke:#327b9b}
+.neo-theme .city-route.selected{filter:drop-shadow(0 2px 4px rgba(31,79,47,.38))}
+.neo-theme .route-endpoint{stroke:#fff}.neo-theme .start-endpoint{fill:var(--forest)}.neo-theme .destination-endpoint{fill:#e7f9bb}.neo-theme .endpoint-letter{fill:#fff}.neo-theme .destination-endpoint+.endpoint-letter{fill:var(--forest)}
+.neo-theme .nyc-map-card{z-index:3;background:linear-gradient(122deg,rgba(255,255,255,.48) 0 25%,transparent 25.5%),rgba(211,245,222,.78)}
+.neo-theme .nyc-map-card strong{color:var(--forest)}.neo-theme .nyc-map-card>span,.neo-theme .density-scale small{color:#4e7163}
+.neo-theme .eyebrow{color:var(--forest-2)}
+.neo-theme .density-scale i{background:#dbefdc}.neo-theme .density-scale i:nth-child(2){background:#b7dcb7}.neo-theme .density-scale i:nth-child(3){background:#80bd86}.neo-theme .density-scale i:nth-child(4){background:var(--forest)}
+.neo-theme .city-route-legend,.neo-theme .map-legend,.neo-theme .map-note{color:var(--forest);background:rgba(220,248,229,.85);border:1px solid rgba(255,255,255,.72);box-shadow:0 10px 26px rgba(47,82,105,.18);backdrop-filter:blur(18px)}
+.neo-theme .line.green{background:var(--forest)}.neo-theme .line.amber{background:#fff}.neo-theme .line.blue{background:#327b9b}
+
+/* Planner */
+.neo-theme .control-panel{background:transparent;border:0}
+.neo-theme .control-panel h1{color:#fff;text-shadow:0 2px 14px rgba(39,70,92,.2)}
+.neo-theme .field-label{color:rgba(255,255,255,.88);text-shadow:0 1px 4px rgba(42,73,94,.22)}
+.neo-theme .search-box{color:var(--forest);background:linear-gradient(122deg,rgba(255,255,255,.44) 0 22%,transparent 22.5%),rgba(219,248,229,.8)}
+.neo-theme .search-box:focus-within{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.22),var(--soft-shadow)}
+.neo-theme .search-box input{color:var(--forest)}.neo-theme .point-label{color:#fff;background:var(--forest)}.neo-theme .destination-point{color:var(--forest);background:#e5f8b7}.neo-theme .search-box button{color:#fff;background:var(--forest)}
+.neo-theme .quick-destinations button{color:var(--forest);background:rgba(218,247,227,.7);border:1px solid rgba(255,255,255,.58);box-shadow:inset 0 1px rgba(255,255,255,.65)}
+.neo-theme .quick-destinations button.selected{color:#fff;background:var(--forest);border-color:rgba(255,255,255,.75);box-shadow:0 10px 24px rgba(37,75,50,.2)}
+.neo-theme .primary-button{color:#fff;background:var(--forest);border:1px solid rgba(255,255,255,.38);box-shadow:0 14px 28px rgba(35,75,49,.2)}
+.neo-theme .primary-button:hover{box-shadow:0 17px 34px rgba(35,75,49,.28)}
+.neo-theme .secondary-button{color:var(--forest);background:rgba(221,248,230,.78);border:1px solid rgba(255,255,255,.7)}
+.neo-theme .condition-card{background:linear-gradient(122deg,rgba(255,255,255,.4) 0 24%,transparent 24.5%),rgba(211,245,222,.7)}
+.neo-theme .condition-list>div{border-color:rgba(23,78,45,.1)}.neo-theme .condition-list strong{color:var(--forest)}.neo-theme .risk-high{color:#8b4c2e!important}.neo-theme .why-link,.neo-theme .text-button{color:var(--forest);font-weight:800}
+
+/* Route detail and cards */
+.neo-theme .route-detail-layer{background:#a8c8cf}.neo-theme .street-map .blocks{stroke:rgba(247,251,247,.88)}.neo-theme .street-map .park{fill:#add8aa}.neo-theme .street-map .water{fill:#83b8c9}
+.neo-theme .route-path.fastest{stroke:#fff}.neo-theme .route-path.safest{stroke:var(--forest)}.neo-theme .route-path.calmest{stroke:#327b9b}.neo-theme .route-path.selected{filter:drop-shadow(0 2px 4px rgba(28,72,43,.36))}
+.neo-theme .tree-dot{background:#397e4c;border-color:#fff;box-shadow:0 2px 7px rgba(31,78,46,.28)}.neo-theme .tree-dot.fair{background:#82b56f}.neo-theme .tree-key,.neo-theme .map-label{color:var(--forest)}
+.neo-theme .map-marker>span,.neo-theme .map-marker small{background:rgba(227,249,234,.94);color:var(--forest);box-shadow:0 8px 22px rgba(46,78,97,.22)}
+.neo-theme .map-marker.start>span{background:var(--forest);color:#fff}.neo-theme .map-marker.destination>span{background:#e6f8b7;color:var(--forest)}.neo-theme .map-marker.resource>span{background:#5e9db7;color:#fff}.neo-theme .map-marker.rest-marker>span{background:#fff;color:var(--forest)}
+.neo-theme .routes-tray{background:linear-gradient(122deg,rgba(255,255,255,.34),transparent 35%),rgba(201,237,214,.91);border-color:rgba(255,255,255,.66)}
+.neo-theme .route-card{color:var(--forest);background:rgba(237,253,242,.64)}.neo-theme .route-card.recommended{background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(208,244,219,.78));border-color:#fff}
+.neo-theme .route-card.selected{box-shadow:0 0 0 3px rgba(255,255,255,.26),0 16px 30px rgba(44,79,98,.2)}.neo-theme .route-badge{color:var(--forest);background:rgba(255,255,255,.58)}.neo-theme .recommended .route-badge{color:#fff;background:var(--forest)}
+.neo-theme .route-card .score{color:#fff;background:var(--forest)}.neo-theme .route-card .metrics,.neo-theme .route-card p{color:#4e7061}.neo-theme .route-card .choose,.neo-theme .route-card:not(.recommended) .choose{color:#fff;background:var(--forest)}
+
+/* Navigation */
+.neo-theme .navigation-screen{background:var(--sky)}
+.neo-theme .nav-map-wrap{background:linear-gradient(145deg,#a7c8d1,#6f9eaf)}
+.neo-theme .nav-map-wrap:after{background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(84,128,150,.14))}
+.neo-theme .mini-map .blocks{stroke:rgba(248,251,247,.8)}.neo-theme .nav-route-line{stroke:var(--forest);filter:drop-shadow(0 2px 4px rgba(30,77,44,.3))}
+.neo-theme .moving-marker{color:#fff;background:var(--forest);box-shadow:0 0 0 8px rgba(255,255,255,.25),0 12px 26px rgba(49,79,98,.22)}
+.neo-theme .nav-resource{color:var(--forest);background:rgba(220,248,229,.88);border:1px solid #fff}.neo-theme .nav-resource span{color:#fff;background:#508fab}.neo-theme .nav-resource small{color:#527365}
+.neo-theme .nav-status-bar{color:var(--forest);background:rgba(218,247,227,.8)}
+.neo-theme .instruction-panel{color:var(--forest);background:linear-gradient(122deg,rgba(255,255,255,.35) 0 22%,transparent 22.5%),rgba(212,245,223,.94);box-shadow:0 -18px 40px rgba(48,79,99,.18)}
+.neo-theme .step-count{color:var(--forest-2)}.neo-theme .direction-arrow{color:var(--forest);text-shadow:0 8px 24px rgba(45,92,58,.16)}.neo-theme .instruction-panel>p{color:#567165}
+.neo-theme .reassurance{background:rgba(239,252,220,.72)}.neo-theme .reassurance>span{color:var(--forest)}
+.neo-theme .nav-controls button{color:var(--forest);background:rgba(255,255,255,.52);border-color:rgba(255,255,255,.74)}.neo-theme .medical-note{color:#567165!important}
+
+/* Completion, drawers and dialogs */
+.neo-theme .completion-screen{background:radial-gradient(ellipse 70% 22% at 10% 82%,rgba(250,246,241,.94) 0 49%,transparent 50%),linear-gradient(160deg,#83aac5,#678fae)}
+.neo-theme .completion-card{color:var(--forest);background:linear-gradient(122deg,rgba(255,255,255,.42) 0 24%,transparent 24.5%),rgba(214,246,224,.85)}
+.neo-theme .checkmark{color:#fff;background:var(--forest);box-shadow:0 0 0 9px rgba(255,255,255,.2),0 14px 28px rgba(41,81,53,.17)}
+.neo-theme .completion-card .lead,.neo-theme .estimate-note{color:#527164}.neo-theme .impact-grid>div{background:rgba(255,255,255,.46);border:1px solid rgba(255,255,255,.72)}.neo-theme .impact-grid strong{color:var(--forest)}
+.neo-theme .feeling-row button{color:var(--forest);background:rgba(255,255,255,.55);border-color:rgba(255,255,255,.75)}
+.neo-theme .scrim{background:rgba(63,91,111,.45);backdrop-filter:blur(9px)}
+.neo-theme .drawer,.neo-theme .modal,.neo-theme .alert-card{color:var(--forest);background:linear-gradient(122deg,rgba(255,255,255,.38),transparent 38%),rgba(213,244,224,.96)}
+.neo-theme .drawer-head,.neo-theme .setting-row{border-color:rgba(23,78,45,.12)}.neo-theme .drawer-head p,.neo-theme .profile-summary span,.neo-theme .setting-row small{color:#557165}
+.neo-theme .close-button{color:var(--forest);background:rgba(255,255,255,.55);border-color:rgba(255,255,255,.8)}
+.neo-theme .message.haven{color:var(--forest);background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.75)}.neo-theme .message.user{color:#fff;background:var(--forest)}
+.neo-theme .suggestion-chips button{color:var(--forest);background:rgba(255,255,255,.48);border-color:rgba(255,255,255,.74)}.neo-theme .chat-input input{color:var(--forest);background:rgba(255,255,255,.58);border-color:var(--forest)}.neo-theme .chat-input button{color:#fff;background:var(--forest)}
+.neo-theme .profile-summary>div{background:rgba(255,255,255,.45)}.neo-theme .medication-box,.neo-theme .safe-place{background:rgba(240,252,220,.68)}.neo-theme .safe-place>span{color:#fff;background:#568fa7}.neo-theme .safe-place b{color:var(--forest)}.neo-theme .alert-icon{color:#fff;background:var(--forest)}
+
+/* Bottom navigation */
+.neo-theme .bottom-nav{background:rgba(214,244,224,.87);border:1px solid rgba(255,255,255,.72);box-shadow:0 12px 34px rgba(48,78,98,.2),inset 0 1px rgba(255,255,255,.65);backdrop-filter:blur(22px)}
+.neo-theme .bottom-nav button{color:#638073}.neo-theme .bottom-nav button.active{color:var(--forest)}
+.neo-theme .assistant-fab{color:#fff;background:var(--forest);box-shadow:0 13px 30px rgba(38,75,49,.24)}.neo-theme .assistant-fab span{color:var(--forest);background:#effbe5}
+
+/* Keep profile and assistant inside the single phone canvas. */
+.neo-theme .scrim{
+  left:50%;right:auto;width:min(100%,430px);transform:translateX(-50%);
+}
+.neo-theme .drawer{
+  left:50%;right:auto;margin-right:0;width:min(100%,430px);
+  transform:translateX(-50%);opacity:0;visibility:hidden;pointer-events:none;
+  transition:.24s opacity,.24s visibility;
+}
+.neo-theme .drawer.open{
+  transform:translateX(-50%);opacity:1;visibility:visible;pointer-events:auto;
+}
+
+@media(max-width:760px){
+  body.neo-theme{background:var(--sky)}
+  .neo-theme .app-shell{box-shadow:none}
+  .neo-theme .topbar{background:rgba(101,140,172,.72)}
+  .neo-theme .map-panel{background:transparent}
+  .neo-theme .map-canvas{border-color:rgba(255,255,255,.62);box-shadow:0 20px 42px rgba(45,76,98,.23)}
+  .neo-theme .map-is-blank .map-canvas{background:rgba(219,248,229,.42)}
+  .neo-theme .control-panel{padding-top:30px}
+  .neo-theme .control-panel h1{font-size:2.5rem;line-height:1.02}
+  .neo-theme .routes-tray{background:linear-gradient(122deg,rgba(255,255,255,.38),transparent 34%),rgba(205,239,217,.96)}
+  .neo-theme .instruction-panel{border:1px solid rgba(255,255,255,.62);border-bottom:0}
+}
+
+@media(min-width:431px){
+  .neo-theme .app-shell{border:1px solid rgba(255,255,255,.26)}
+  .neo-theme .scrim{top:28px;bottom:auto;height:844px;max-height:calc(100dvh - 56px);border-radius:42px}
+  .neo-theme .drawer{top:28px;bottom:auto;height:844px;max-height:calc(100dvh - 56px);border-radius:42px;overflow:hidden}
+}

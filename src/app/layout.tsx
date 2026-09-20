@@ -13,8 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Safer Walk NYC",
-  description: "Compare NYC walking routes by estimated environmental exposure: air, traffic, shade and heat.",
+  title: "HavenPath NY",
+  description: "Compare NYC walking routes by estimated environmental exposure: air, traffic, shade, heat and tree pollen.",
+  applicationName: "HavenPath NY",
+  appleWebApp: { capable: true, title: "HavenPath NY", statusBarStyle: "black-translucent" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -23,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="web-layout neo-theme">{children}</body>
     </html>
   );
 }

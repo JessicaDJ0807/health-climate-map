@@ -45,3 +45,10 @@ next-env.d.ts
 
 # hackathon dataset starter repo (separate git repo)
 /nyc2026-dataset/
+
+# design handoff prototypes from UI/UX (static PWAs, not part of the build).
+# The web handoff's stylesheets are vendored into src/styles/haven/ instead.
+/HavenPath-Full-App/
+/HavenPath-Full-App.zip
+/HavenPath-current-version/
+/HavenPath-Web-Version/

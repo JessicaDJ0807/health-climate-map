@@ -147,7 +147,7 @@ export default function TreePanel({ summary, cityDensity, area, pinned, onClear,
         <div>
           <h1 className="text-lg font-semibold text-[#0b0b0b]">NYC Street Trees</h1>
           <p className="text-xs text-[#52514e]">
-            {summary.censusYear} Street Tree Census (latest official count) · NYC Parks
+            NYC Parks Forestry tree inventory · updated {summary.dataUpdated}
           </p>
         </div>
         <Link href="/" className="shrink-0 text-xs text-[#2a78d6] hover:underline">

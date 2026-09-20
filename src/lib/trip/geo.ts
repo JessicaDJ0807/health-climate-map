@@ -67,36 +67,45 @@ export function bboxOf(lines: LngLat[][], padM = 0): [number, number, number, nu
   return [w - dx, s - dy, e + dx, n + dy];
 }
 
-/** Uniform grid over projected metres for fast "anything within r metres" queries. */
+/**
+ * Uniform grid over projected metres for fast "anything within r metres"
+ * queries. Each point carries a small integer weight; trees use it for the
+ * pollen class, and callers that don't care leave it at 0.
+ */
 export class PointGrid {
-  private cells = new Map<string, [number, number][]>();
+  private cells = new Map<string, [number, number, number][]>();
   constructor(private cellM: number) {}
 
   private key(x: number, y: number) {
     return `${Math.floor(x / this.cellM)},${Math.floor(y / this.cellM)}`;
   }
 
-  add(p: LngLat) {
+  add(p: LngLat, weight = 0) {
     const [x, y] = toMeters(p);
     const k = this.key(x, y);
     const cell = this.cells.get(k);
-    if (cell) cell.push([x, y]);
-    else this.cells.set(k, [[x, y]]);
+    if (cell) cell.push([x, y, weight]);
+    else this.cells.set(k, [[x, y, weight]]);
   }
 
-  countWithin(p: LngLat, r: number) {
+  /** How many points lie within `r`, and the sum of their weights. */
+  within(p: LngLat, r: number): { n: number; weight: number } {
     const [x, y] = toMeters(p);
     const cx = Math.floor(x / this.cellM), cy = Math.floor(y / this.cellM);
     const reach = Math.ceil(r / this.cellM);
-    let n = 0;
+    let n = 0, weight = 0;
     for (let i = cx - reach; i <= cx + reach; i++) {
       for (let j = cy - reach; j <= cy + reach; j++) {
-        for (const [px, py] of this.cells.get(`${i},${j}`) ?? []) {
-          if (Math.hypot(px - x, py - y) <= r) n++;
+        for (const [px, py, w] of this.cells.get(`${i},${j}`) ?? []) {
+          if (Math.hypot(px - x, py - y) <= r) { n++; weight += w; }
         }
       }
     }
-    return n;
+    return { n, weight };
+  }
+
+  countWithin(p: LngLat, r: number) {
+    return this.within(p, r).n;
   }
 }
 

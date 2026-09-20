@@ -23,7 +23,8 @@ app in this repo.
   (92°F, feels like 95°F) so the heat behaviour can be demoed on a mild day.
 - **Three route cards,** each drawn in its own colour on the map:
   - **Fastest**
-  - **Lower-exposure** — less traffic and air pollution
+  - **Least traffic** — fewest minutes beside truck routes (renamed from
+    "Lower-exposure", which didn't say exposure to what)
   - **Most shaded** — heat-conscious
 - **Recommended route:** a "Recommended for asthma" style badge plus a
   one-line explanation, e.g. *"Avoids higher-traffic streets with only 3 extra
@@ -56,8 +57,8 @@ the departure time changes how much heat matters.
 
 1. Generate 4–5 candidate routes; sample each every 25 m.
 2. **Fastest** = shortest walking time.
-3. **Lower-exposure** = lowest combined traffic + air score, among routes at
-   most ~35% longer than fastest.
+3. **Least traffic** = fewest minutes beside truck routes (air breaks ties),
+   among routes at most ~35% longer than fastest.
 4. **Most shaded** = highest shade %, within the same limit.
 5. If one route wins two roles, merge its badges ("Fastest · Most shaded")
    instead of showing a near-duplicate. This can legitimately happen, e.g. at

@@ -1,0 +1,11 @@
+{
+  "_comment": "Airborne-pollen class by tree genus: 2 = wind-pollinated major allergen, 1 = wind-pollinated but a lighter or less clinically significant load, 0 = insect-pollinated (negligible airborne pollen). Genera absent from this table default to 0; the listed genera cover ~98% of NYC's living inventory. Classes follow pollination biology and the Ogren Plant Allergy Scale. They describe a genus, not an individual tree: for Acer, Ginkgo, Fraxinus and Populus the male clones shed pollen and the female ones shed none, and NYC's inventory does not record sex.",
+  "high": [
+    "Quercus", "Platanus", "Acer", "Ulmus", "Fraxinus", "Carpinus", "Celtis",
+    "Morus", "Betula", "Juniperus", "Ailanthus", "Populus", "Ostrya", "Thuja"
+  ],
+  "moderate": [
+    "Zelkova", "Ginkgo", "Liquidambar", "Pinus", "Metasequoia", "Taxodium",
+    "Eucommia", "Picea", "Fagus"
+  ]
+}

@@ -95,6 +95,32 @@ export async function searchPlaces(text: string, signal?: AbortSignal, near?: Se
   return out;
 }
 
+// Rough NYC extent; the planner's data layers only cover the city.
+const NYC = { west: -74.3, south: 40.45, east: -73.65, north: 40.95 };
+
+/**
+ * The device's current position as a Place. Needs a secure context, so it
+ * works on https and on localhost, but not over plain http on a LAN address.
+ */
+export async function currentPlace(): Promise<Place> {
+  if (!navigator.geolocation) throw new Error("This browser can't share your location.");
+  const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+  }).catch((err: GeolocationPositionError) => {
+    throw new Error(
+      err.code === err.PERMISSION_DENIED
+        ? "Location permission is off. Allow it in your browser, or pick a point on the map."
+        : "Couldn't get your location. Pick a point on the map instead.",
+    );
+  });
+  const { longitude: lng, latitude: lat } = position.coords;
+  if (lng < NYC.west || lng > NYC.east || lat < NYC.south || lat > NYC.north) {
+    throw new Error("You appear to be outside New York City, which is the only area this app covers.");
+  }
+  const place = await reverseGeocode(lng, lat);
+  return { ...place, label: place.label === "Dropped pin" ? "Current location" : place.label };
+}
+
 /** Nearest address for a clicked point; falls back to "Dropped pin". */
 export async function reverseGeocode(lng: number, lat: number): Promise<Place> {
   const fallback = { label: "Dropped pin", lng, lat };

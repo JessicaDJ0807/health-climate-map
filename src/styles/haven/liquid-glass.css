@@ -1,0 +1,238 @@
+/* HavenPath Liquid Glass — clear, luminous, minimal */
+:root{
+  --liquid-ink:#172126;
+  --liquid-muted:#66737a;
+  --liquid-glass:rgba(255,255,255,.28);
+  --liquid-glass-strong:rgba(255,255,255,.47);
+  --liquid-line:rgba(255,255,255,.72);
+  --liquid-shadow:0 24px 55px rgba(58,75,88,.16),inset 0 1px 1px rgba(255,255,255,.84);
+  --liquid-blue:#4f7793;
+  --liquid-accent:#3d6856;
+  --ink:var(--liquid-ink);
+  --ink-2:var(--liquid-muted);
+  --paper:var(--liquid-glass-strong);
+  --line:rgba(40,55,63,.1);
+  --shadow:var(--liquid-shadow);
+}
+
+html{background:#eef2f5}
+body.neo-theme{
+  color:var(--liquid-ink);
+  background:
+    radial-gradient(ellipse 42% 32% at 16% 18%,rgba(164,209,234,.62),transparent 72%),
+    radial-gradient(ellipse 38% 30% at 83% 22%,rgba(250,196,185,.43),transparent 72%),
+    radial-gradient(ellipse 50% 40% at 54% 88%,rgba(178,204,224,.5),transparent 75%),
+    #eef2f5;
+}
+.neo-theme .app-shell{
+  color:var(--liquid-ink);
+  background:
+    radial-gradient(ellipse 80% 38% at 0% 9%,rgba(147,203,232,.74),transparent 66%),
+    radial-gradient(ellipse 72% 42% at 100% 20%,rgba(255,193,180,.58),transparent 65%),
+    radial-gradient(ellipse 88% 50% at 38% 78%,rgba(199,214,232,.7),transparent 70%),
+    linear-gradient(160deg,#f7f9fa,#e8eef2 55%,#f4f5f5);
+  box-shadow:0 36px 100px rgba(49,65,76,.2),inset 0 0 0 1px rgba(255,255,255,.58);
+}
+.neo-theme button:focus-visible,.neo-theme input:focus-visible{outline:2px solid rgba(39,63,75,.76);outline-offset:3px}
+
+/* Universal liquid glass material */
+.neo-theme .topbar,.neo-theme .nyc-map-card,.neo-theme .condition-card,
+.neo-theme .search-box,.neo-theme .quick-destinations button,.neo-theme .route-card,
+.neo-theme .routes-tray,.neo-theme .nav-status-bar,.neo-theme .nav-resource,
+.neo-theme .reassurance,.neo-theme .nav-controls button,.neo-theme .completion-card,
+.neo-theme .impact-grid>div,.neo-theme .feeling-row button,.neo-theme .drawer,
+.neo-theme .modal,.neo-theme .alert-card,.neo-theme .profile-summary>div,
+.neo-theme .medication-box,.neo-theme .safe-place,.neo-theme .bottom-nav{
+  color:var(--liquid-ink);
+  background:
+    linear-gradient(128deg,rgba(255,255,255,.34) 0 18%,transparent 18.5% 66%,rgba(255,255,255,.12) 66.5%),
+    var(--liquid-glass);
+  border:1px solid var(--liquid-line);
+  box-shadow:var(--liquid-shadow);
+  backdrop-filter:blur(30px) saturate(145%);
+  -webkit-backdrop-filter:blur(30px) saturate(145%);
+}
+
+/* Chrome */
+.neo-theme .topbar{background:rgba(255,255,255,.15);border-top:0;border-left:0;border-right:0;box-shadow:0 8px 28px rgba(67,84,96,.07);backdrop-filter:blur(34px) saturate(150%)}
+.neo-theme .brand-mark,.neo-theme .haven-icon{color:#233039;background:rgba(255,255,255,.55);box-shadow:inset 0 1px 1px #fff,0 10px 24px rgba(59,75,86,.1)}
+.neo-theme .brand strong{color:var(--liquid-ink);text-shadow:none}
+.neo-theme .pill-button,.neo-theme .profile-chip{color:var(--liquid-ink);background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.72);box-shadow:inset 0 1px #fff,0 10px 24px rgba(57,73,84,.08);backdrop-filter:blur(24px)}
+.neo-theme .install-button{color:#fff;background:rgba(31,43,50,.76);border-color:rgba(255,255,255,.34);box-shadow:0 12px 26px rgba(35,47,54,.16)}
+.neo-theme .avatar{color:#243039;background:rgba(255,255,255,.57);box-shadow:inset 0 1px #fff}
+
+/* Blank visual stage */
+.neo-theme .map-panel{background:transparent}
+.neo-theme .map-toolbar{color:var(--liquid-ink);text-shadow:none}
+.neo-theme .map-toolbar button{color:var(--liquid-ink);background:rgba(255,255,255,.27);border:1px solid rgba(255,255,255,.68);backdrop-filter:blur(20px)}
+.neo-theme .map-is-blank .map-canvas{
+  background:
+    radial-gradient(ellipse 70% 66% at 20% 18%,rgba(161,209,230,.38),transparent 72%),
+    radial-gradient(ellipse 60% 62% at 86% 74%,rgba(242,193,190,.29),transparent 72%),
+    rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.74);
+  box-shadow:0 26px 54px rgba(55,73,85,.12),inset 0 1px 2px rgba(255,255,255,.76);
+  backdrop-filter:blur(34px) saturate(135%);
+}
+
+/* Planner */
+.neo-theme .control-panel{background:transparent}
+.neo-theme .control-panel h1{color:var(--liquid-ink);text-shadow:none;font-weight:650}
+.neo-theme .eyebrow{color:#53666f}.neo-theme .field-label{color:#5d6c73;text-shadow:none}
+.neo-theme .search-box{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.76)}
+.neo-theme .search-box:focus-within{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.38),var(--liquid-shadow)}
+.neo-theme .search-box input{color:var(--liquid-ink)}
+.neo-theme .point-label{color:#fff;background:rgba(30,43,50,.8)}.neo-theme .destination-point{color:#26333a;background:rgba(255,255,255,.67)}
+.neo-theme .search-box button{color:#fff;background:rgba(31,45,52,.78)}
+.neo-theme .quick-destinations button{color:#4d5c63;background:rgba(255,255,255,.2)}
+.neo-theme .quick-destinations button.selected{color:#fff;background:rgba(28,42,49,.76);border-color:rgba(255,255,255,.55);box-shadow:0 14px 28px rgba(41,55,64,.14)}
+.neo-theme .primary-button{color:#fff;background:rgba(27,41,48,.8);border:1px solid rgba(255,255,255,.4);box-shadow:0 16px 30px rgba(39,52,60,.16);backdrop-filter:blur(18px)}
+.neo-theme .secondary-button{color:var(--liquid-ink);background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.72);box-shadow:inset 0 1px #fff}
+.neo-theme .condition-card{background:rgba(255,255,255,.21)}
+.neo-theme .condition-list>div{border-color:rgba(32,47,55,.09)}.neo-theme .condition-list strong,.neo-theme .why-link,.neo-theme .text-button{color:var(--liquid-ink)}
+
+/* Route cards and sheets */
+.neo-theme .routes-tray{background:rgba(239,244,247,.63);border-color:rgba(255,255,255,.78)}
+.neo-theme .route-card,.neo-theme .route-card.recommended{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.72)}
+.neo-theme .route-card.recommended{box-shadow:0 20px 44px rgba(53,70,81,.13),inset 0 1px #fff}
+.neo-theme .route-card.selected{box-shadow:0 0 0 2px rgba(255,255,255,.6),0 20px 40px rgba(52,68,79,.15)}
+.neo-theme .route-badge{color:#4f5e65;background:rgba(255,255,255,.4)}.neo-theme .recommended .route-badge{color:#fff;background:rgba(35,49,56,.76)}
+.neo-theme .route-card .score{color:#fff;background:rgba(35,49,56,.78)}
+.neo-theme .route-card .metrics,.neo-theme .route-card p{color:var(--liquid-muted)}
+.neo-theme .route-card .choose,.neo-theme .route-card:not(.recommended) .choose{color:#fff;background:rgba(31,44,51,.78)}
+
+/* Navigation */
+.neo-theme .navigation-screen{background:transparent}
+.neo-theme .nav-map-wrap{background:radial-gradient(ellipse at 22% 18%,rgba(151,202,228,.7),transparent 66%),radial-gradient(ellipse at 88% 74%,rgba(248,196,187,.45),transparent 64%),#e8eef2}
+.neo-theme .nav-map-wrap:after{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(216,226,232,.12))}
+.neo-theme .mini-map .blocks{stroke:rgba(255,255,255,.5)}.neo-theme .nav-route-line{stroke:rgba(37,60,69,.78);filter:drop-shadow(0 4px 7px rgba(46,64,74,.22))}
+.neo-theme .moving-marker{color:#fff;background:rgba(31,46,53,.82);box-shadow:0 0 0 8px rgba(255,255,255,.27),0 14px 30px rgba(48,64,74,.16)}
+.neo-theme .nav-resource,.neo-theme .nav-status-bar{background:rgba(255,255,255,.27);color:var(--liquid-ink)}
+.neo-theme .nav-resource span{color:#fff;background:rgba(76,112,132,.7)}.neo-theme .nav-resource small{color:var(--liquid-muted)}
+.neo-theme .instruction-panel{color:var(--liquid-ink);background:rgba(244,247,248,.58);border-color:rgba(255,255,255,.76);box-shadow:0 -24px 55px rgba(58,75,87,.12);backdrop-filter:blur(34px) saturate(140%)}
+.neo-theme .step-count{color:#5c6c73}.neo-theme .direction-arrow{color:#27383f;text-shadow:0 12px 28px rgba(44,62,70,.13)}.neo-theme .instruction-panel>p,.neo-theme .medical-note{color:var(--liquid-muted)!important}
+.neo-theme .reassurance,.neo-theme .nav-controls button{background:rgba(255,255,255,.25)}
+
+/* Completion and overlays */
+.neo-theme .completion-screen{background:radial-gradient(ellipse at 15% 15%,rgba(151,206,233,.62),transparent 65%),radial-gradient(ellipse at 85% 70%,rgba(250,195,185,.43),transparent 64%),#edf2f5}
+.neo-theme .completion-card{background:rgba(255,255,255,.3)}
+.neo-theme .checkmark{color:#fff;background:rgba(32,47,54,.8);box-shadow:0 0 0 9px rgba(255,255,255,.28),0 15px 30px rgba(47,63,72,.13)}
+.neo-theme .completion-card .lead,.neo-theme .estimate-note{color:var(--liquid-muted)}.neo-theme .impact-grid>div,.neo-theme .feeling-row button{background:rgba(255,255,255,.25)}.neo-theme .impact-grid strong{color:var(--liquid-ink)}
+.neo-theme .scrim{background:rgba(222,229,233,.4);backdrop-filter:blur(18px)}
+.neo-theme .drawer,.neo-theme .modal,.neo-theme .alert-card{background:rgba(243,247,248,.64);border-color:rgba(255,255,255,.82);backdrop-filter:blur(38px) saturate(145%)}
+.neo-theme .drawer-head,.neo-theme .setting-row{border-color:rgba(36,51,59,.09)}.neo-theme .drawer-head p,.neo-theme .profile-summary span,.neo-theme .setting-row small{color:var(--liquid-muted)}
+.neo-theme .close-button{color:var(--liquid-ink);background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.76)}
+.neo-theme .message.haven,.neo-theme .profile-summary>div,.neo-theme .medication-box,.neo-theme .safe-place{color:var(--liquid-ink);background:rgba(255,255,255,.23);border-color:rgba(255,255,255,.7)}
+.neo-theme .message.user{color:#fff;background:rgba(31,45,52,.8)}
+.neo-theme .suggestion-chips button{color:var(--liquid-ink);background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.7)}
+.neo-theme .chat-input input{color:var(--liquid-ink);background:rgba(255,255,255,.32);border-color:rgba(47,62,69,.36)}.neo-theme .chat-input button{color:#fff;background:rgba(31,45,52,.8)}
+.neo-theme .alert-icon{color:#fff;background:rgba(31,45,52,.8)}
+
+/* Floating controls */
+.neo-theme .bottom-nav{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.76);box-shadow:0 18px 38px rgba(50,66,77,.14),inset 0 1px #fff}
+.neo-theme .bottom-nav button{color:#718087}.neo-theme .bottom-nav button.active{color:#1f3037}
+.neo-theme .assistant-fab{color:#fff;background:rgba(27,42,49,.8);border:1px solid rgba(255,255,255,.4);box-shadow:0 15px 32px rgba(38,51,59,.16);backdrop-filter:blur(20px)}.neo-theme .assistant-fab span{color:#24343b;background:rgba(255,255,255,.7)}
+
+@media(max-width:760px){
+  body.neo-theme{background:#edf2f5}
+  .neo-theme .topbar{background:rgba(255,255,255,.12)}
+  .neo-theme .map-is-blank .map-canvas{background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.08))}
+  .neo-theme .routes-tray,.neo-theme .instruction-panel{background:rgba(240,245,247,.68)}
+}
+
+/* Premium light iridescent refinement */
+:root{
+  --prism-blue:#a8dcf5;
+  --prism-lilac:#d6c9ff;
+  --prism-peach:#ffc7ad;
+  --prism-lime:#d9f58f;
+}
+body.neo-theme{
+  background:
+    radial-gradient(ellipse 48% 36% at 9% 14%,rgba(146,215,246,.72),transparent 69%),
+    radial-gradient(ellipse 42% 34% at 92% 13%,rgba(255,191,160,.6),transparent 70%),
+    radial-gradient(ellipse 46% 38% at 78% 86%,rgba(207,190,255,.58),transparent 72%),
+    radial-gradient(ellipse 42% 28% at 18% 88%,rgba(213,243,144,.36),transparent 70%),
+    linear-gradient(145deg,#f7fbfd,#e9f1f6 52%,#f9f5f5);
+}
+.neo-theme .app-shell{
+  background:
+    radial-gradient(ellipse 88% 38% at -8% 4%,rgba(139,213,247,.79),transparent 68%),
+    radial-gradient(ellipse 78% 42% at 112% 16%,rgba(255,187,154,.7),transparent 68%),
+    radial-gradient(ellipse 88% 46% at 86% 74%,rgba(205,188,255,.66),transparent 70%),
+    radial-gradient(ellipse 76% 34% at -5% 82%,rgba(218,245,147,.42),transparent 68%),
+    linear-gradient(165deg,#f9fcfd 0%,#e9f1f5 48%,#f8f4f6 100%);
+}
+.neo-theme .topbar,.neo-theme .nyc-map-card,.neo-theme .condition-card,
+.neo-theme .search-box,.neo-theme .quick-destinations button,.neo-theme .route-card,
+.neo-theme .routes-tray,.neo-theme .nav-status-bar,.neo-theme .nav-resource,
+.neo-theme .reassurance,.neo-theme .nav-controls button,.neo-theme .completion-card,
+.neo-theme .impact-grid>div,.neo-theme .feeling-row button,.neo-theme .drawer,
+.neo-theme .modal,.neo-theme .alert-card,.neo-theme .profile-summary>div,
+.neo-theme .medication-box,.neo-theme .safe-place,.neo-theme .bottom-nav{
+  background:
+    linear-gradient(128deg,rgba(255,255,255,.5) 0 15%,rgba(255,255,255,.12) 15.5% 44%,rgba(202,228,244,.16) 63%,rgba(255,205,183,.12) 100%),
+    rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.82);
+  box-shadow:
+    0 24px 56px rgba(70,88,103,.15),
+    inset 0 1px 1px rgba(255,255,255,.96),
+    inset 1px 0 rgba(178,224,246,.34),
+    inset -1px 0 rgba(255,198,180,.28);
+  backdrop-filter:blur(34px) saturate(165%);
+  -webkit-backdrop-filter:blur(34px) saturate(165%);
+}
+.neo-theme .map-is-blank .map-canvas{
+  background:
+    radial-gradient(ellipse 72% 68% at 12% 10%,rgba(130,211,247,.47),transparent 70%),
+    radial-gradient(ellipse 68% 62% at 90% 18%,rgba(255,190,158,.38),transparent 70%),
+    radial-gradient(ellipse 72% 66% at 76% 90%,rgba(199,181,255,.38),transparent 72%),
+    radial-gradient(ellipse 54% 48% at 8% 88%,rgba(213,243,136,.24),transparent 70%),
+    rgba(255,255,255,.13);
+  border-color:rgba(255,255,255,.88);
+  box-shadow:0 28px 60px rgba(66,87,102,.15),inset 0 1px 2px #fff,inset 1px 0 rgba(154,219,246,.42),inset -1px 0 rgba(255,193,170,.34);
+}
+.neo-theme .primary-button,
+.neo-theme .route-card .choose,
+.neo-theme .route-card:not(.recommended) .choose,
+.neo-theme .assistant-fab,
+.neo-theme .chat-input button{
+  color:#22302f;
+  background:linear-gradient(135deg,rgba(234,252,184,.95),rgba(189,238,144,.92) 46%,rgba(172,222,214,.9));
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 15px 32px rgba(100,137,112,.2),inset 0 1px 1px rgba(255,255,255,.92);
+}
+.neo-theme .quick-destinations button.selected,
+.neo-theme .recommended .route-badge,
+.neo-theme .route-card .score,
+.neo-theme .point-label,
+.neo-theme .checkmark,
+.neo-theme .message.user{
+  color:#fff;
+  background:linear-gradient(145deg,rgba(48,67,74,.9),rgba(75,102,104,.82));
+  box-shadow:0 13px 29px rgba(45,62,70,.16),inset 0 1px rgba(255,255,255,.25);
+}
+.neo-theme .destination-point,.neo-theme .assistant-fab span{
+  color:#263638;
+  background:linear-gradient(145deg,rgba(239,252,201,.92),rgba(199,238,177,.88));
+}
+.neo-theme .routes-tray,.neo-theme .instruction-panel,.neo-theme .drawer{
+  background:
+    radial-gradient(ellipse at 10% 0%,rgba(149,218,247,.26),transparent 54%),
+    radial-gradient(ellipse at 100% 22%,rgba(255,192,165,.23),transparent 56%),
+    radial-gradient(ellipse at 75% 100%,rgba(204,188,255,.22),transparent 58%),
+    rgba(245,249,250,.62);
+}
+.neo-theme .completion-screen,.neo-theme .nav-map-wrap{
+  background:
+    radial-gradient(ellipse at 8% 10%,rgba(139,215,249,.72),transparent 62%),
+    radial-gradient(ellipse at 94% 22%,rgba(255,188,156,.55),transparent 62%),
+    radial-gradient(ellipse at 78% 88%,rgba(202,184,255,.52),transparent 66%),
+    linear-gradient(155deg,#f7fbfc,#e9f1f5 55%,#f8f4f5);
+}
+.neo-theme .bottom-nav button.active{color:#304e45;text-shadow:0 1px 10px rgba(202,239,150,.55)}
+
+@media(max-width:760px){
+  body.neo-theme{background:linear-gradient(155deg,#eff7fa,#f7f1f2)}
+  .neo-theme .routes-tray,.neo-theme .instruction-panel{background:rgba(244,248,250,.66)}
+}

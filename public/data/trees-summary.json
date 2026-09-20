@@ -1,43 +1,48 @@
 {
-  "censusYear": 2015,
-  "source": "NYC Open Data uvpi-gqnh (2015 Street Tree Census), 9nt8-h7nd (2020 NTAs)",
-  "builtAt": "2026-09-19",
-  "unmatched": 86,
+  "dataUpdated": "2026-09-09",
+  "source": "NYC Open Data hn5i-inap (Forestry Tree Points), 9nt8-h7nd (2020 NTAs)",
+  "builtAt": "2026-09-20",
+  "unmatched": 554,
   "densityBreaks": [
-    832,
-    1010,
-    1170,
-    1338
+    1122,
+    1294,
+    1464,
+    1745
   ],
+  "pollenMix": {
+    "low": 368862,
+    "moderate": 107035,
+    "high": 412438
+  },
   "city": {
-    "alive": 652173,
-    "dead": 13961,
-    "stump": 17654,
-    "good": 528850,
-    "fair": 96504,
-    "poor": 26818,
-    "total": 683788,
-    "speciesCount": 133,
+    "alive": 888335,
+    "dead": 12444,
+    "stump": 46342,
+    "good": 548470,
+    "fair": 311819,
+    "poor": 23774,
+    "total": 947121,
+    "speciesCount": 321,
     "topSpecies": [
       {
         "name": "London planetree",
-        "count": 87014
+        "count": 99998
       },
       {
-        "name": "honeylocust",
-        "count": 64263
-      },
-      {
-        "name": "Callery pear",
-        "count": 58931
+        "name": "Thornless honeylocust",
+        "count": 77424
       },
       {
         "name": "pin oak",
-        "count": 53185
+        "count": 66440
       },
       {
-        "name": "Norway maple",
-        "count": 34189
+        "name": "Callery pear",
+        "count": 52025
+      },
+      {
+        "name": "Japanese zelkova",
+        "count": 40429
       }
     ]
   }

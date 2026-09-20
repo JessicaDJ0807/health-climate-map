@@ -2,6 +2,7 @@
 // scripts/build-trip-data.mjs, plus live street trees and the NWS forecast.
 import { booleanPointInPolygon } from "@turf/boolean-point-in-polygon";
 import { PointGrid, SegmentGrid, bboxOf, type LngLat } from "./geo";
+import { pollenClassOf } from "./pollen";
 
 type Poly = GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
 
@@ -65,55 +66,101 @@ export function loadStaticEnv() {
 
 // --- street trees ---------------------------------------------------------------
 //
-// Tree locations come from the 2015 Street Tree Census (unchanged since 2017).
-// Preferred source: static tiles in public/data/tree-tiles/ written by
-// scripts/build-tree-data.mjs. Fallback: the live NYC Open Data API. If both
-// fail, callers fall back to neighborhood tree density (see loadNtaTrees).
+// Tree locations come from the NYC Parks Forestry inventory, which is updated
+// continuously and includes park interiors. Preferred source: static tiles in
+// public/data/tree-tiles/ written by scripts/build-tree-data.mjs. Fallback:
+// the live NYC Open Data API. If both fail, callers fall back to neighborhood
+// tree density (see loadNtaTrees). Each tree carries its pollen class, so the
+// same grid answers both "how shaded" and "how much airborne pollen".
 
 // Must match TILE_DEG in scripts/build-tree-data.mjs.
 const TILE_DEG = 0.02;
-const TREES_API = "https://data.cityofnewyork.us/resource/uvpi-gqnh.json";
+const TREES_API = "https://data.cityofnewyork.us/resource/hn5i-inap.json";
 
 let tileIndex: Promise<Set<string> | null> | null = null;
 
-async function treesFromTiles([w, s, e, n]: number[], grid: PointGrid, signal?: AbortSignal) {
+/** Tile keys covering a bbox, or null when the tile index isn't available. */
+async function tileKeysFor([w, s, e, n]: number[]): Promise<string[] | null> {
   tileIndex ??= fetch("/data/tree-tiles/index.json")
     .then((r) => (r.ok ? r.json() : null))
     .then((keys: string[] | null) => (keys ? new Set(keys) : null))
     .catch(() => null);
   const index = await tileIndex;
-  if (!index) return false;
+  if (!index) return null;
   const keys: string[] = [];
   for (let x = Math.floor(w / TILE_DEG); x <= Math.floor(e / TILE_DEG); x++) {
     for (let y = Math.floor(s / TILE_DEG); y <= Math.floor(n / TILE_DEG); y++) {
       if (index.has(`${x}_${y}`)) keys.push(`${x}_${y}`);
     }
   }
-  const buffers = await Promise.all(
-    keys.map((k) =>
-      fetch(`/data/tree-tiles/${k}.bin`, { signal }).then((r) => {
-        if (!r.ok) throw new Error(`Tree tile ${k} failed (${r.status})`);
-        return r.arrayBuffer();
-      }),
-    ),
-  );
-  for (const buf of buffers) {
-    const v = new Int32Array(buf); // [lng×1e5, lat×1e5, ...]
-    for (let i = 0; i < v.length; i += 2) grid.add([v[i] / 1e5, v[i + 1] / 1e5]);
+  return keys;
+}
+
+const tileCache = new Map<string, Promise<Int32Array>>();
+
+function tileData(key: string, signal?: AbortSignal) {
+  let hit = tileCache.get(key);
+  if (!hit) {
+    hit = fetch(`/data/tree-tiles/${key}.bin`, { signal }).then((r) => {
+      if (!r.ok) throw new Error(`Tree tile ${key} failed (${r.status})`);
+      return r.arrayBuffer().then((b) => new Int32Array(b));
+    });
+    // A failed tile shouldn't be cached as permanently broken.
+    hit.catch(() => tileCache.delete(key));
+    tileCache.set(key, hit);
+  }
+  return hit;
+}
+
+/**
+ * Individual tree positions inside a bbox, for drawing them on the map.
+ * Reads the same tiles the scoring uses, so nothing extra is downloaded once a
+ * tile is in the cache. Returns null when tiles aren't available — the map
+ * then keeps the neighborhood-density shading on its own.
+ */
+export async function loadTreePointsIn(
+  bbox: number[],
+  signal?: AbortSignal,
+): Promise<[number, number][] | null> {
+  const keys = await tileKeysFor(bbox);
+  if (!keys) return null;
+  const [w, s, e, n] = bbox;
+  const tiles = await Promise.all(keys.map((k) => tileData(k, signal)));
+  const out: [number, number][] = [];
+  for (const v of tiles) {
+    for (let i = 0; i < v.length; i += 3) {
+      const lng = v[i] / 1e5, lat = v[i + 1] / 1e5;
+      if (lng >= w && lng <= e && lat >= s && lat <= n) out.push([lng, lat]);
+    }
+  }
+  return out;
+}
+
+async function treesFromTiles(bbox: number[], grid: PointGrid, signal?: AbortSignal) {
+  const keys = await tileKeysFor(bbox);
+  if (!keys) return false;
+  const tiles = await Promise.all(keys.map((k) => tileData(k, signal)));
+  for (const v of tiles) {
+    // [lng×1e5, lat×1e5, pollenClass, ...]
+    for (let i = 0; i < v.length; i += 3) grid.add([v[i] / 1e5, v[i + 1] / 1e5], v[i + 2]);
   }
   return true;
 }
 
 async function treesFromApi([w, s, e, n]: number[], grid: PointGrid, signal?: AbortSignal) {
   const params = new URLSearchParams({
-    $select: "latitude,longitude",
-    $where: `status='Alive' and latitude between ${s} and ${n} and longitude between ${w} and ${e}`,
+    $select: "genusspecies,location",
+    $where:
+      `tpstructure='Full' and tpcondition not in('Dead','Critical') and ` +
+      `within_box(location, ${n}, ${w}, ${s}, ${e})`,
     $limit: "100000",
   });
   const res = await fetch(`${TREES_API}?${params}`, { signal });
   if (!res.ok) throw new Error(`Tree data failed (${res.status})`);
-  const rows: { latitude: string; longitude: string }[] = await res.json();
-  for (const r of rows) grid.add([Number(r.longitude), Number(r.latitude)]);
+  const rows: { genusspecies?: string; location?: { coordinates: [number, number] } }[] = await res.json();
+  for (const r of rows) {
+    if (r.location) grid.add(r.location.coordinates, pollenClassOf(r.genusspecies));
+  }
 }
 
 /** Street trees around the routes, or null if no tree source is reachable. */

@@ -12,9 +12,12 @@ type Props = {
   onChange: (place: Place | null) => void;
   placeholder: string;
   near?: SearchNear; // current map view, to rank nearby results first
+  onUseCurrentLocation?: () => void;
+  /** The handoff gives the origin field a shorter variant. */
+  compact?: boolean;
 };
 
-export default function PlaceInput({ label, marker, value, onChange, placeholder, near }: Props) {
+export default function PlaceInput({ label, marker, value, onChange, placeholder, near, onUseCurrentLocation, compact }: Props) {
   const [text, setText] = useState(value?.label ?? "");
   const [results, setResults] = useState<Place[]>([]);
   const [open, setOpen] = useState(false);
@@ -62,47 +65,53 @@ export default function PlaceInput({ label, marker, value, onChange, placeholder
   };
 
   return (
-    <div className="relative">
-      <label className="flex items-center gap-2 rounded-lg bg-[#f0efec] px-3 py-2 focus-within:ring-2 focus-within:ring-[#2a78d6]">
-        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#0b0b0b] text-[11px] font-semibold text-white">
-          {marker}
-        </span>
+    <div className="search-field">
+      <label className={`search-box${compact ? " compact-search" : ""}`}>
+        <span className={`point-label${marker === "B" ? " destination-point" : ""}`}>{marker}</span>
         <span className="sr-only">{label}</span>
         <input
-          className="w-full min-w-0 bg-transparent text-sm text-[#0b0b0b] outline-none placeholder:text-[#898781]"
           value={text}
           placeholder={placeholder}
           role="combobox"
           aria-expanded={open}
           aria-controls={listId}
           aria-autocomplete="list"
+          aria-label={label}
           onChange={(e) => {
-            setTyped(true);
             setText(e.target.value);
+            setTyped(true);
+            if (!e.target.value.trim()) onChange(null);
           }}
           onFocus={() => suggestions.length && setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          onBlur={() => setTimeout(() => setOpen(false), 120)}
           onKeyDown={(e) => {
             if (!open || !suggestions.length) return;
-            if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => (a + 1) % suggestions.length); }
-            else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => (a - 1 + suggestions.length) % suggestions.length); }
+            if (e.key === "ArrowDown") { e.preventDefault(); setActive((i) => (i + 1) % suggestions.length); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); setActive((i) => (i - 1 + suggestions.length) % suggestions.length); }
             else if (e.key === "Enter") { e.preventDefault(); choose(suggestions[active]); }
             else if (e.key === "Escape") setOpen(false);
           }}
         />
+        {onUseCurrentLocation && (
+          <button
+            type="button"
+            onClick={onUseCurrentLocation}
+            title="Use my current location"
+            aria-label={`Use my current location for ${label.toLowerCase()}`}
+            className="locate-button"
+          >
+            ◎
+          </button>
+        )}
       </label>
       {open && suggestions.length > 0 && (
-        <ul
-          id={listId}
-          role="listbox"
-          className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/10"
-        >
+        <ul id={listId} role="listbox" className="place-suggestions">
           {suggestions.map((p, i) => (
             <li
               key={`${p.label}-${i}`}
               role="option"
               aria-selected={i === active}
-              className={`cursor-pointer px-3 py-2 text-sm text-[#0b0b0b] ${i === active ? "bg-[#f0efec]" : ""}`}
+              className={i === active ? "is-active" : undefined}
               onMouseDown={(e) => { e.preventDefault(); choose(p); }}
               onMouseEnter={() => setActive(i)}
             >
