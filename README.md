@@ -2,7 +2,9 @@
 
 **Two walking routes can take the same time and expose you to very different air, traffic and sun. HavenPath NY shows you the difference before you leave.**
 
-New York City · walking only · built on NYC Open Data
+Climate-resilient urban walking navigation · New York City · built on NYC Open Data
+
+📊 **[Pitch deck](docs/HavenPath-NY-pitch-deck.pdf)** · 📄 **[How it works](docs/HOW-IT-WORKS.md)**
 
 ![Comparing two walking routes from Atlantic Terminal to Prospect Park West](docs/screenshots/route-comparison.webp)
 
@@ -12,7 +14,9 @@ New York City · walking only · built on NYC Open Data
 
 Every map app answers one question: *what is fastest?* For a lot of people that is the wrong question.
 
-If you have asthma, twenty minutes beside a truck route is not the same as twenty minutes on a side street. If you are elderly, or pushing a stroller in August, a sunny sidewalk and a shaded one are not the same walk. That difference is measurable from public data, and no routing app surfaces it.
+Current mapping tools do nothing to protect pedestrians from climate hazards, and offer no adaptation at all for people with specific health conditions. If you have asthma, twenty minutes beside a truck route is not the same as twenty minutes on a side street. If you are elderly, or pushing a stroller in August, a sunny sidewalk and a shaded one are not the same walk. That difference is measurable from public data, and no routing app surfaces it.
+
+**Who it's for:** people with climate-sensitive health needs — asthma, heat sensitivity, respiratory conditions, or other individual vulnerabilities.
 
 HavenPath NY plans a walk the way those people actually choose one. It finds several real walking routes between two points, measures what each one exposes you to, and recommends the gentler option — while telling you exactly what it costs you in minutes.
 
@@ -22,12 +26,12 @@ In the screenshot above, the recommended route cuts time spent near truck routes
 
 Every 25 metres along every candidate route, against four public datasets:
 
-| | Layer | What it reads |
-|---|---|---|
-| 🌳 | **Trees** | 888,335 living street and park trees — shade, and how dense it is |
-| 🚛 | **Traffic** | NYC DOT truck routes, as a proxy for heavy vehicle exposure |
-| 🌫️ | **Air** | PM2.5 and NO₂ annual means by community district |
-| ☀️ | **Heat** | Neighborhood surface temperature, plus live forecast and sun position |
+| | Layer | What it reads | Source |
+|---|---|---|---|
+| 🌳 | **Trees** | 888,335 living street and park trees — shade, and how dense it is | [NYC Parks Forestry Tree Points](https://data.cityofnewyork.us/d/hn5i-inap) |
+| 🚛 | **Traffic** | Truck routes, as a proxy for heavy vehicle exposure | [NYC DOT Truck Routes](https://data.cityofnewyork.us/d/jjja-shxy) |
+| 🌫️ | **Air** | PM2.5 and NO₂ annual means by community district | [NYC Environment & Health Data Portal](https://a816-dohbesp.nyc.gov/IndicatorPublic/) |
+| ☀️ | **Heat** | Neighborhood surface temperature, plus live forecast and sun position | [NYC Heat Vulnerability Index](https://github.com/nychealth/EHDP-data/tree/production/key-topics/heat-vulnerability-index) |
 
 Each one is a map layer you can switch between, so you can see the city the route planner sees:
 
@@ -74,6 +78,14 @@ Known limits, stated up front:
 - **Walking only, NYC only,** by design.
 
 [`docs/HOW-IT-WORKS.md`](docs/HOW-IT-WORKS.md) documents every step, every constant, and every dataset that was considered and rejected.
+
+## Roadmap
+
+With more support, the team would:
+
+- **Validate with the people it is for** — test with people who have asthma, heat sensitivity and other climate-sensitive health needs, and check whether the recommendations meaningfully reduce exposure on everyday trips.
+- **Add real-time environmental and accessibility data**, so street-level differences come from more than trees and truck routes.
+- **Expand beyond NYC** into a climate-health navigation layer that could plug into existing mapping, transportation, healthcare and public-health platforms.
 
 ## Running it
 
@@ -122,13 +134,28 @@ docs/HOW-IT-WORKS.md      the full method
 
 All public, all free, no API keys.
 
-- [NYC Parks Forestry Tree Points](https://data.cityofnewyork.us/resource/hn5i-inap) — `hn5i-inap`, updated continuously
-- [NYC DOT Truck Routes](https://data.cityofnewyork.us/resource/jjja-shxy) — `jjja-shxy`
-- [NYC Environment & Health Data Portal](https://github.com/nychealth/EHDP-data) — PM2.5 and NO₂
-- NYC Heat Vulnerability Index — surface temperature by NTA
-- [2020 Neighborhood Tabulation Areas](https://data.cityofnewyork.us/resource/9nt8-h7nd) — `9nt8-h7nd`
-- [NYC Planning Labs GeoSearch](https://geosearch.planninglabs.nyc/) + [Photon](https://photon.komoot.io/) — place search
-- [Valhalla](https://valhalla1.openstreetmap.de/) on OpenStreetMap — pedestrian routing
-- [National Weather Service](https://www.weather.gov/documentation/services-web-api) — hourly forecast
+| Source | Used for | ID |
+|---|---|---|
+| [NYC Parks Forestry Tree Points](https://data.cityofnewyork.us/d/hn5i-inap) | Shade and tree species, updated continuously | `hn5i-inap` |
+| [NYC DOT Truck Routes](https://data.cityofnewyork.us/d/jjja-shxy) | Traffic proxy | `jjja-shxy` |
+| [2020 Neighborhood Tabulation Areas](https://data.cityofnewyork.us/d/9nt8-h7nd) | Parks and neighborhood boundaries | `9nt8-h7nd` |
+| [NYC Environment & Health Data Portal](https://a816-dohbesp.nyc.gov/IndicatorPublic/) ([data](https://github.com/nychealth/EHDP-data)) | PM2.5 and NO₂ by community district | — |
+| [NYC Heat Vulnerability Index](https://github.com/nychealth/EHDP-data/tree/production/key-topics/heat-vulnerability-index) | Surface temperature by neighborhood | — |
+| [NYC Planning Labs GeoSearch](https://geosearch.planninglabs.nyc/) | Address and building search | — |
+| [Photon](https://photon.komoot.io/) | Landmark search ([OpenStreetMap](https://www.openstreetmap.org/)) | — |
+| [Valhalla](https://valhalla.openstreetmap.de/) ([project](https://valhalla.github.io/valhalla/)) | Pedestrian routing on OpenStreetMap | — |
+| [National Weather Service API](https://www.weather.gov/documentation/services-web-api) | Hourly temperature forecast | — |
 
 Tree inventory snapshot: **2026-09-09** · 888,335 living trees · 321 species.
+
+## Team
+
+Built by **CareBuilders** for the HiC New York 2026 hackathon.
+
+| | |
+|---|---|
+| **Zhaoxi Chen** — Design & Technology | Rendered the app and website, including animations, interactions and functionality |
+| **Baihe Fu** — Communication Designer | In-app layout, visual formatting and user experience |
+| **Jessica Hsiao** — Software Engineer | The web app's decision logic, and wiring the datasets behind route scoring |
+| **Lei Hao** — Biomedical Engineer | Healthcare domain input and feature testing |
+| **Weiming He** — Computer Engineer | Agent loops and the data-fetching pipelines behind customization |
