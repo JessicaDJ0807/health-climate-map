@@ -12,6 +12,10 @@ this document says so.
 Code references: routing is in `src/lib/trip/routing.ts`, data loading in
 `src/lib/trip/env.ts`, and all scoring in `src/lib/trip/score.ts`.
 
+This document covers the method only. For what the product is, the interface,
+the four map layers and the companion dataset agent, see the
+[README](../README.md).
+
 ## Overview
 
 ```mermaid
@@ -23,11 +27,11 @@ flowchart TD
   E --> F[5. Conditions at departure<br/>forecast heat index, sun height,<br/>pollen season]
   F --> G[6. Score per profile]
   G --> H[Recommended route<br/>+ explanation]
-  P[Profile / departure time / weather toggles] --> F
+  P[Saved profile / departure time] --> F
 ```
 
 Steps 1–4 run **once per trip**. Steps 5–6 are cheap and re-run instantly
-whenever the user changes profile, departure time or weather, which is why the
+whenever the profile or the departure time changes, which is why the
 recommendation updates without reloading.
 
 ## Data sources
@@ -234,8 +238,9 @@ score. Not loaded.
 
 ## Step 4 — Assigning roles
 
-Roles don't depend on profile or time, so the three cards stay stable while
-the user toggles.
+Roles don't depend on profile or time, so the cards stay stable as the profile
+and departure time change. There are at most three, and fewer when one route
+wins several roles — the labels are then combined onto one card.
 
 - **Fastest** — shortest walking time.
 - **Detour allowance** — other roles must be within **35% or 8 minutes** of
@@ -262,7 +267,7 @@ near-duplicates.
 
 | Input | How it's computed |
 |---|---|
-| Heat index | From the forecast hour within 30 minutes of departure, using the NWS heat-index formula (Rothfusz regression) on temperature and humidity. If no forecast is available, 75°F is assumed. The **Hot day** toggle replaces the forecast with 92°F / feels like 95°F. |
+| Heat index | From the forecast hour within 30 minutes of departure, using the NWS heat-index formula (Rothfusz regression) on temperature and humidity. If no forecast is available, 75°F is assumed. A hot-day scenario (92°F, feels like 95°F) exists in `useTrip.ts` as `HOT_DAY`, but no control currently exposes it — `weather` is always `"forecast"`. |
 | Sun factor | Sun height above the horizon at the trip midpoint, from `suncalc`. 0 when the sun is down, rising to 1 at 45° or higher: `sin(altitude) / sin(45°)`, clamped to 0–1. |
 | Heat factor | `(heat index − 65°F) / 25`, clamped to 0–1.4. So 65°F → 0, 90°F → 1, 95°F → 1.2. |
 | Pollen season | *Switched off.* Would be 0 outside roughly late February to early June, rising to 1 at a mid-April peak. |
@@ -327,12 +332,15 @@ it would have ranked routes on a factor absent from every card.
 
 ### Choosing a profile
 
-The profile chips set this directly. A profile saved on the device
-(`useDeviceProfile.ts`, local only — no account, nothing sent anywhere) also
-selects one: asthma → Asthma, heat sensitivity or a high shade preference →
-Heat-sensitive, otherwise General.
-The chips still override it for a single trip without rewriting what was
-saved.
+The profile saved on the device picks this
+(`useDeviceProfile.ts`, local only — no account, nothing sent anywhere):
+asthma → Asthma, heat sensitivity or a high shade preference → Heat-sensitive,
+otherwise General. With nothing saved, every trip is scored as General.
+
+Earlier builds had a row of profile chips on the planner that overrode this per
+trip. They were removed, so the Profile drawer is now the only way to change
+it — `changeProfile()` is called from exactly one place,
+`HavenPlanner.tsx`, in response to the saved profile.
 
 ### Values shown on each card
 

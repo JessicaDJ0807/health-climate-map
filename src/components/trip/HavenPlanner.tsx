@@ -31,7 +31,8 @@ export default function HavenPlanner() {
   const [expanded, setExpanded] = useState(false);
   const mapRef = useRef<MapHandle>(null);
 
-  // A saved profile picks the scoring profile; the chips still override it.
+  // The saved profile is the only thing that picks the scoring profile now;
+  // the planner's profile chips were removed.
   const [suggested, setSuggested] = useState<ProfileId | null>(null);
   const wanted = profileIdFor(device);
   if (device.saved && wanted !== suggested) {

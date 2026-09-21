@@ -1,5 +1,12 @@
 # Safer Trip Planner — Hackathon Plan
 
+> **Historical.** This is the plan written before the build, under the app's
+> original name. The app shipped as **HavenPath NY** and several decisions here
+> changed — the UI was rebuilt on the design team's handoff, and the pollen axis
+> was built and then switched off. For how the app actually works today, read
+> [`docs/HOW-IT-WORKS.md`](docs/HOW-IT-WORKS.md); for what it is, read the
+> [README](README.md). Kept for the record of what was intended and why.
+
 A condition-aware walking-route planner for NYC. Users enter an origin,
 destination, departure time, and health profile (General, Asthma,
 Heat-sensitive); the app compares 2–3 walking routes by **estimated
