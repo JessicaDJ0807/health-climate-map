@@ -71,13 +71,17 @@ The project's AI work sits in a [companion tool](#project-components), one step 
 
 HavenPath was submitted as two pieces, and the AI is in the first one:
 
-### 1. Dataset agent
+### 1. VerdeLab — the dataset agent
 
-An AI research agent that finds public datasets, pulls them in and visualizes them. It is how the team searched NYC Open Data for candidate layers, checked their coverage, and decided what was worth scoring against. It runs at research time — not when someone plans a walk.
+[VerdeLab](https://vra.verdept.com/) is a research agent built by **Weiming He**, one of the team. Give it a goal and it works out what kind of question it is, plans, runs tools in parallel, and pauses for review as it goes. It is how the team searched NYC Open Data for candidate layers, checked their coverage, and decided what was worth scoring against — at research time, not when someone plans a walk.
 
 | The agent | Analysing the tree inventory |
 |---|---|
-| ![The dataset agent's thread list and prompt](docs/screenshots/agent-overview.webp) | ![The agent running an analysis over NYC park and street trees](docs/screenshots/agent-analysis.webp) |
+| ![VerdeLab's thread list and prompt](docs/screenshots/agent-overview.webp) | ![The agent running an analysis over NYC park and street trees](docs/screenshots/agent-analysis.webp) |
+
+Asked to map every street and park tree in NYC, it found the source, pulled it and plotted the lot — street trees against park trees, from the same Forestry inventory this app scores against:
+
+![Every NYC street and park tree plotted by the agent](docs/screenshots/agent-map.webp)
 
 It also refuses when the data isn't there. Asked to map public AED locations, it searched its catalog, found only unrelated matches, and stopped:
 
@@ -186,4 +190,4 @@ Built by **CareBuilders** for the Health in Climate NYC 2026 hackathon.
 | **Baihe Fu** — Communication Designer | In-app layout, visual formatting and user experience |
 | **Jessica Hsiao** — Software Engineer | The web app's decision logic, and wiring the datasets behind route scoring |
 | **Lei Hao** — Biomedical Engineer | Healthcare domain input and feature testing |
-| **Weiming He** — Computer Engineer | The dataset agent — agent loops and data-fetching pipelines behind the customization |
+| **Weiming He** — Computer Engineer | [VerdeLab](https://vra.verdept.com/), the dataset agent — its agent loops and data-fetching pipelines |
