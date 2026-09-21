@@ -59,11 +59,24 @@ Set it once and every route is scored against it. The profile lives in your brow
 |---|---|
 | ![Profile drawer](docs/screenshots/profile.webp) | ![Assistant drawer](docs/screenshots/assistant.webp) |
 
-The assistant answers from the numbers already on screen — the same `TripResult` the cards render. It is not a language model and gives no medical advice.
+The assistant answers from the numbers already on screen — the same `TripResult` the cards render. It is deliberately **not** a language model: for health-adjacent guidance, an answer that can't be traced back to a figure on a card is worse than no answer, so it says what it can't tell you instead of inventing it. It gives no medical advice.
+
+The project's AI work sits in a [companion tool](#project-components), one step earlier in the pipeline.
 
 <p align="center">
   <img src="docs/screenshots/mobile.webp" width="300" alt="HavenPath NY at phone width">
 </p>
+
+## Project components
+
+HavenPath was submitted as two pieces, and the AI is in the first one:
+
+**1. Dataset agent** — an AI chat that finds public datasets, pulls them in and visualizes them. It is how the team searched NYC Open Data for candidate layers, checked coverage and decided what was worth scoring against. It runs at research time, not when someone plans a walk.
+<!-- TODO: add the repo/demo link for the dataset agent here. -->
+
+**2. HavenPath NY (this repo)** — the routing and scoring app the datasets feed into. Everything here is deterministic: the same trip, profile and departure time always produce the same routes, scores and wording. That is the point. Every number on a card traces to a documented constant in [`score.ts`](src/lib/trip/score.ts), which is what makes [`HOW-IT-WORKS.md`](docs/HOW-IT-WORKS.md) possible to write and possible to argue with.
+
+So "AI-powered" describes how the data got here, not how a route gets ranked.
 
 ## Honest about what this is
 
@@ -150,7 +163,7 @@ Tree inventory snapshot: **2026-09-09** · 888,335 living trees · 321 species.
 
 ## Team
 
-Built by **CareBuilders** for the HiC New York 2026 hackathon.
+Built by **CareBuilders** for the Health in Climate NYC 2026 hackathon.
 
 | | |
 |---|---|
@@ -158,4 +171,4 @@ Built by **CareBuilders** for the HiC New York 2026 hackathon.
 | **Baihe Fu** — Communication Designer | In-app layout, visual formatting and user experience |
 | **Jessica Hsiao** — Software Engineer | The web app's decision logic, and wiring the datasets behind route scoring |
 | **Lei Hao** — Biomedical Engineer | Healthcare domain input and feature testing |
-| **Weiming He** — Computer Engineer | Agent loops and the data-fetching pipelines behind customization |
+| **Weiming He** — Computer Engineer | The dataset agent — agent loops and data-fetching pipelines behind the customization |
