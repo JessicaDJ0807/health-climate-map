@@ -71,10 +71,25 @@ The project's AI work sits in a [companion tool](#project-components), one step 
 
 HavenPath was submitted as two pieces, and the AI is in the first one:
 
-**1. Dataset agent** — an AI chat that finds public datasets, pulls them in and visualizes them. It is how the team searched NYC Open Data for candidate layers, checked coverage and decided what was worth scoring against. It runs at research time, not when someone plans a walk.
-<!-- TODO: add the repo/demo link for the dataset agent here. -->
+### 1. Dataset agent
 
-**2. HavenPath NY (this repo)** — the routing and scoring app the datasets feed into. Everything here is deterministic: the same trip, profile and departure time always produce the same routes, scores and wording. That is the point. Every number on a card traces to a documented constant in [`score.ts`](src/lib/trip/score.ts), which is what makes [`HOW-IT-WORKS.md`](docs/HOW-IT-WORKS.md) possible to write and possible to argue with.
+An AI research agent that finds public datasets, pulls them in and visualizes them. It is how the team searched NYC Open Data for candidate layers, checked their coverage, and decided what was worth scoring against. It runs at research time — not when someone plans a walk.
+
+| The agent | Analysing the tree inventory |
+|---|---|
+| ![The dataset agent's thread list and prompt](docs/screenshots/agent-overview.webp) | ![The agent running an analysis over NYC park and street trees](docs/screenshots/agent-analysis.webp) |
+
+It also refuses when the data isn't there. Asked to map public AED locations, it searched its catalog, found only unrelated matches, and stopped:
+
+> *No AED inventory dataset exists in the vetted catalog — the two matches (MTA bus stops, VA facilities) are unrelated… so I can't build this without one.*
+
+![The agent reporting that no matching dataset exists rather than substituting a different one](docs/screenshots/agent-data-source.webp)
+
+That is the same rule the app follows: say what you can't answer rather than substitute something close.
+
+### 2. HavenPath NY (this repo)
+
+The routing and scoring app the datasets feed into. Everything here is deterministic: the same trip, profile and departure time always produce the same routes, scores and wording. That is the point. Every number on a card traces to a documented constant in [`score.ts`](src/lib/trip/score.ts), which is what makes [`HOW-IT-WORKS.md`](docs/HOW-IT-WORKS.md) possible to write and possible to argue with.
 
 So "AI-powered" describes how the data got here, not how a route gets ranked.
 
